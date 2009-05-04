@@ -119,6 +119,25 @@
     font-size: 1.2em;
   }
   
+  form.setup {
+    background: wheat;
+    padding: 1em;
+    margin:  2em auto;
+    min-width: 14em;
+    max-width: 28em;
+  }
+  
+  dt { 
+    clear: both;
+    float: left;
+    text-align: right;
+    width: 10em;
+    margin: 0;
+    margin-left: 1.5em;
+  }
+  
+  dd input { width: 7em; }
+  
   .error { color: red; display: none; }
 	</style>
 </head>
@@ -146,7 +165,7 @@
   
   <div id="display">
     <h1>This Meeting Has Cost</h1>
-    <p id="timer"></p>
+    <p>$<span id="timer"></span></p>
     <p>so far...</p>
     <form class="stop"><input type="submit" value="stop the bleeding"></form>
   </div>
