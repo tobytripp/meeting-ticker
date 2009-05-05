@@ -93,7 +93,10 @@ $(document).ready( function() {
   });
   
   var now = new Date();
-  $("#start_time").eq(0).val( now.getHours() + ":" + now.getMinutes() );
+  var minutes = now.getMinutes();
+  if( minutes < 10 ) minutes = "0" + minutes;
+  
+  $("#start_time").eq(0).val( now.getHours() + ":" + minutes );
   
   $("#start_time").clockpick({
     military: true,
