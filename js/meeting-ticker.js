@@ -32,7 +32,6 @@ function valid( data ) {
   var valid   = false;
   
   for( key in data ) {    
-    console.log( data[key] );
     var error = $("dd:has(:input[name=" + key + "])").prev( ".error" );
     
     if( isNaN( data[key] ) ) {
