@@ -18,6 +18,12 @@ h1 { font-size: 1.8em; }
 h2 { font-size: 1.4em; }
 h3 { font-size: 1.0em; }
 
+p { 
+  font-size: 1.0em;
+  padding: 0.2em;
+  margin:  0;
+}
+
 .small { font-size: 0.6em; }
 
 #display { 
@@ -53,6 +59,8 @@ form dd {
 
 dd input { width: 7em; }
 
-form p { clear: both; }
+form p {
+  clear: both;
+}
 
 .error { color: red; display: none; }

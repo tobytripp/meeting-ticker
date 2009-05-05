@@ -6,7 +6,7 @@ function begin( form ) {
     hourly_rate: $("input[name=hourly_rate]").val(),
     attendees:   $("input[name=attendees]").val()
   }
-  var display = $("#timer");
+  var display = $(".cost_display");
 
   if( !valid( data ) ) return false;
   
@@ -19,6 +19,7 @@ function begin( form ) {
   start_time = new Date();
   start_time.setHours( hours );
   start_time.setMinutes( minutes );
+  start_time.setSeconds( 0 );
 
   var timer = setInterval( function() {
     update( display, hourly_burn );
@@ -53,7 +54,14 @@ function update( element, rate_per_hour ) {
   var seconds_elapsed = difference.valueOf() / 1000;
   var rate_per_second = rate_per_hour / 60 / 60;
   
-  element.text( (seconds_elapsed * rate_per_second).toFixed( 2 ) );
+  var current_total   = seconds_elapsed * rate_per_second;
+  element.text( "$" + current_total.toFixed( 2 ) );
+  
+  var new_size = current_total * 0.001;
+  if( new_size < 1  ) new_size = 1;
+  if( new_size > 15 ) new_size = 20;
+  
+  element.css( "font-size", new_size + "em" );
 }
 
 $(document).ready( function() {
