@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <title>Meeting Ticker</title>
+  <script type="text/javascript" src="./js/jquery-1.3.2.js"></script>
+  <script type="text/javascript" src="./js/jquery.watermark.js"></script>
+  
+	<script type="text/javascript" charset="utf-8">
+	var current_amount = 0;
+	var start_time = null;
+	
+	function begin( form ) {
+	  var data = {
+	    hourly_rate: $("input[name=hourly_rate]").val(),
+	    attendees:   $("input[name=attendees]").val()
+	  }
+    var display = $("#timer");
+
+    if( !valid( data ) ) return false;
+    
+    var hourly_burn  = Number( data.hourly_rate ) * Number( data.attendees );
+  
+    start_time = new Date();
+    var timer = setInterval( function() {
+      update( display, hourly_burn );
+    }, 100 );
+    
+    return timer;
+	};
+	
+	function valid( data ) {
+	  var valid   = false;
+    
+    for( key in data ) {    
+      console.log( data[key] );
+      var error = $("dd:has(:input[name=" + key + "])").prev( ".error" );
+      
+      if( isNaN( data[key] ) ) {
+        error.text( "Must be a number" ).show();
+        valid = false;
+      } else if( data[key] <= 0 ) {
+        error.text( "Must be a positive, non-zero, number" ).show();
+      } else {
+        valid = true;
+      }
+    }
+    
+    return valid;
+	};
+	
+	function update( element, rate_per_hour ) {
+	  var current_time    = new Date();
+	  var difference      = current_time - start_time;
+	  var seconds_elapsed = difference.valueOf() / 1000;
+	  var rate_per_second = rate_per_hour / 60 / 60;
+	  
+	  element.text( (seconds_elapsed * rate_per_second).toFixed( 2 ) );
+	}
+	
+  $(document).ready( function() {
+    var timer = null;
+    $("#display").hide();
+    $("input").each( function() {
+      $(this).watermark( $(this).attr( "title" ) );
+    } );
+     
+    $('form.setup').submit( function( event ) {
+      event.preventDefault();
+      
+      $(".error").hide();
+      
+      timer = begin( this );
+      if( timer ) {
+        $(this).hide();
+        $("#display").fadeIn( 1500 );
+      }
+      
+      return false;
+    } );
+    
+    $('form.stop').submit( function( event ) {
+      event.preventDefault();
+      clearInterval( timer );
+      return false;
+    });
+   } );
+	</script>
+	
+	<style type="text/css" media="screen">
+	body {
+	  margin-top: 5em;
+	  background: #6E0911;
+	  color:      #757890;
+	  text-align: center;
+	}
+	
+	h1, h2, h3 {
+	  margin: 0; padding: 0;
+	  letter-spacing: -0.05em;
+	  font-family: Georgia, "Times New Roman", Times, serif;
+	  font-weight: normal;
+	  color: white;
+	  text-align: center;
+	}
+	
+	h1 { font-size: 1.8em; }
+	h2 { font-size: 1.4em; }
+	h3 { font-size: 1.0em; }
+	
+	#display { 
+	  background: #470F14;
+	  padding: 5em;
+	  margin:  2em;
+  }
+  
+  #display p {
+    font-size: 1.2em;
+  }
+  
+  form.setup {
+    background: wheat;
+    padding: 1em;
+    margin:  2em auto;
+    min-width: 14em;
+    max-width: 28em;
+  }
+  
+  dt { 
+    clear: both;
+    float: left;
+    text-align: right;
+    width: 10em;
+    margin: 0;
+    margin-left: 1.5em;
+  }
+  
+  dd input { width: 7em; }
+  
+  .error { color: red; display: none; }
+	</style>
+</head>
+
+<body>
+  <form class="setup" accept-charset="utf-8">
+    <dl>
+      <dt><label for="attendees">Number of Attendees:</label></dt>
+      <dd class="error"></dd>
+      <dd><input type="text"
+                 name="attendees"
+                 value=""
+                 title="count"
+                 id="attendees"></dd>
+      <dt><label for="hourly_rate">Average Hourly Salary:</label></dt>
+      <dd class="error"></dd>
+      <dd><input type="text"
+                 name="hourly_rate"
+                 value=""
+                 title="guess (200?)"
+                 id="hourly_rate"></dd>
+    </dl>
+    <p><input type="submit" value="Start &rarr;"></p>
+  </form>
+  
+  <div id="display">
+    <h1>This Meeting Has Cost</h1>
+    <p>$<span id="timer"></span></p>
+    <p>so far...</p>
+    <form class="stop"><input type="submit" value="stop the bleeding"></form>
+  </div>
+</body>
+</html>
