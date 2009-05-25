@@ -54,13 +54,14 @@ function update( element, rate_per_hour ) {
   var rate_per_second = rate_per_hour / 60 / 60;
   
   var current_total   = seconds_elapsed * rate_per_second;
-  element.text( "$" + current_total.toFixed( 2 ) );
-  
-  var new_size = current_total * 0.001;
-  if( new_size < 1  ) new_size = 1;
-  if( new_size > 15 ) new_size = 20;
-  
-  element.css( "font-size", new_size + "em" );
+  var cost_html = '';
+  var current_total = current_total.toFixed(2);
+  var index = current_total.length - 1;	
+  for(index; index >= 0; index--) {
+    cost_html += '<span>' + current_total[index] + '</span>';	
+  }
+  cost_html += '<span>$</span>';
+  element.html(cost_html);
 }
 
 $(document).ready( function() {

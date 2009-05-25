@@ -30,6 +30,7 @@ p {
   background: #470F14;
   padding: 5em;
   margin:  2em;
+  -moz-border-radius:30px;
 }
 
 #display p {
@@ -64,3 +65,29 @@ form p {
 }
 
 .error { color: red; display: none; }
+
+#display p.cost_display {
+  background:#000;
+  font-family:Times New Roman;
+  font-size:9em;
+  margin:0;
+  padding:0;
+  border:1px solid #FFF;
+  -moz-border-radius:10px;
+  height:168px;
+}
+#display p.cost_display span {
+  background:#000;
+  border-right:1px #FFF solid;
+  display:block;
+  float:right;
+  width:100px;
+}
+#display p.cost_display span:first-child {
+	-moz-border-radius-topRight:10px;
+	-moz-border-radius-bottomRight:10px;
+}
+#display p.cost_display span:last-child {
+	-moz-border-radius-topRight:10px;
+	-moz-border-radius-bottomRights:10px;
+}
