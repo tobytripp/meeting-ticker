@@ -1,5 +1,6 @@
 var current_amount = 0;
 var start_time = null;
+var uls = [];
 
 function begin( form ) {
   var data = {
@@ -23,10 +24,38 @@ function begin( form ) {
 
   var timer = setInterval( function() {
     update( display, hourly_burn );
-  }, 100 );
-  
+  }, 100);
+ 
+  insertNumberLists();
+
   return timer;
-};
+}
+
+function insertNumberLists() {
+  for(var a = 1; a < 11; a++) {
+	var ul = document.createElement('ul');
+	$(ul).addClass('list');
+	$(ul).attr('id', 'list_' + a);
+	$(ul).css({
+	  right:90 * (a - 1)	
+	});
+    for(var b = 0; b < 10; b++) {     
+      var li = document.createElement('li');
+	  var span = document.createElement('span');
+	  $(span).text(b);
+	  $(span).appendTo(li);
+	  $(li).appendTo(ul);
+    }
+    var li = document.createElement('li');
+	var span = document.createElement('span');
+	$(span).text('.');
+	$(span).appendTo(li);
+	$(li).appendTo(ul);
+
+	uls.push(ul);
+	$(ul).appendTo($('.cost_display'));
+  }
+}
 
 function valid( data ) {
   var valid   = false;
@@ -56,12 +85,23 @@ function update( element, rate_per_hour ) {
   var current_total   = seconds_elapsed * rate_per_second;
   var cost_html = '';
   var current_total = current_total.toFixed(2);
-  var index = current_total.length - 1;	
-  for(index; index >= 0; index--) {
-    cost_html += '<span>' + current_total[index] + '</span>';	
+  for(var a = current_total.length - 1; a >= 0; a--) {
+    translateDigitToList(a, current_total);
   }
-  cost_html += '<span>$</span>';
-  element.html(cost_html);
+}
+
+function translateDigitToList(total_index, total) {
+  var index = (total.length - 1) - total_index;
+  if(total[total_index] == '.') {
+  	$(uls[index]).animate({
+	  top: -(10 * $('.cost_display').height())
+	});
+  } else {
+    $(uls[index]).animate({
+      top: -(total[total_index] * $('.cost_display').height())
+    }, {duration:75 });
+  }
+  $(uls[index]).addClass('active');
 }
 
 $(document).ready( function() {
