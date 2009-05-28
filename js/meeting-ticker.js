@@ -32,28 +32,28 @@ function begin( form ) {
 }
 
 function insertNumberLists() {
-  for(var a = 1; a < 11; a++) {
-	var ul = document.createElement('ul');
-	$(ul).addClass('list');
-	$(ul).attr('id', 'list_' + a);
-	$(ul).css({
-	  right:90 * (a - 1)	
-	});
+  for( var a = 1; a < 11; a++ ) {
+  	var ul = document.createElement( 'ul' );
+  	$(ul).addClass( 'list' );
+  	$(ul).attr( 'id', 'list_' + a );
+  	$(ul).css({ right:90 * (a - 1) });
+  	
     for(var b = 0; b < 10; b++) {     
-      var li = document.createElement('li');
-	  var span = document.createElement('span');
-	  $(span).text(b);
-	  $(span).appendTo(li);
-	  $(li).appendTo(ul);
+      var li   = document.createElement( 'li' );
+  	  var span = document.createElement( 'span' );
+  	  $(span).text( b );
+  	  $(span).appendTo( li );
+  	  $(li).appendTo( ul );
     }
-    var li = document.createElement('li');
-	var span = document.createElement('span');
-	$(span).text('.');
-	$(span).appendTo(li);
-	$(li).appendTo(ul);
+    
+    var li   = document.createElement( 'li' );
+  	var span = document.createElement( 'span' );
+  	$(span).text( '.' );
+  	$(span).appendTo( li );
+  	$(li).appendTo( ul );
 
-	uls.push(ul);
-	$(ul).appendTo($('.cost_display'));
+  	uls.push( ul );
+  	$(ul).appendTo( $('.cost_display') );
   }
 }
 
@@ -90,18 +90,18 @@ function update( element, rate_per_hour ) {
   }
 }
 
-function translateDigitToList(total_index, total) {
+function translateDigitToList( total_index, total ) {
   var index = (total.length - 1) - total_index;
-  if(total[total_index] == '.') {
+  if( total[total_index] == '.' ) {
   	$(uls[index]).animate({
-	  top: -(10 * $('.cost_display').height())
-	});
+  	  top: -(10 * $('.cost_display').height())
+  	});
   } else {
     $(uls[index]).animate({
-      top: -(total[total_index] * $('.cost_display').height())
+      top: -( total[total_index] * $('.cost_display').height() )
     }, {duration:75 });
   }
-  $(uls[index]).addClass('active');
+  $(uls[index]).addClass( 'active' );
 }
 
 $(document).ready( function() {

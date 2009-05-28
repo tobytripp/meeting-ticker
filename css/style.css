@@ -31,8 +31,8 @@ p {
   background: #470F14;
   padding: 2em;
   margin:  2em;
-  -moz-border-radius:30px;
-  -webkit-border-radius:30px;
+  -moz-border-radius:    30px;
+  -webkit-border-radius: 30px;
 }
 
 #display p {
@@ -41,13 +41,13 @@ p {
 
 form.setup {
   background: wheat;
-  padding: 1em;
-  margin:  2em auto;
+  padding:    1em;
+  margin:     2em auto;
   min-width: 14em;
   max-width: 28em;
-  font-size:2em;
-  -moz-border-radius:20px;
-  -webkit-border-radius:20px;
+  font-size:  2em;
+  -moz-border-radius:    20px;
+  -webkit-border-radius: 20px;
 }
 
 form dt { 
@@ -57,8 +57,8 @@ form dt {
   width: 10em;
   margin: 0;
   margin-left: 1.5em;
-  padding-top:.1em;
-  margin-bottom:1em;
+  padding-top: 0.1em;
+  margin-bottom: 1em;
 }
 
 form dd {
@@ -66,8 +66,8 @@ form dd {
 }
 
 dd input { 
-  width: 7em;
-  font-size:1em;	 
+  width:     7em;
+  font-size: 1em;	 
 }
 
 form p {
@@ -77,75 +77,79 @@ form p {
 .error { color: red; display: none; }
 
 #display div.cost_display {
-  background:#000;
-  font-family:Times New Roman;
-  font-size:8em;
-  margin:19px 0px;
-  padding:0;
-  border-width:1px; 
-  border-style:solid;
-  -moz-border-radius:10px;
-  -webkit-border-radius:10px;
-  height:148px;
-  position:relative;
-  overflow:hidden;
+  background:   #000;
+  font-family:  Times New Roman;
+  font-size:    8em;
+  margin:       19px 0px;
+  padding:      0;
+  border-width: 1px; 
+  border-style: solid;
+  -moz-border-radius:    10px;
+  -webkit-border-radius: 10px;
+  height:       148px;
+  position:     relative;
+  overflow:     hidden;
 }
 div.cost_display ul li {
-  list-style-type:none;
+  list-style-type: none;
 }
 div.cost_display ul.list {
-  display:block;
-  width:90px;
-  height:1000px;
-  position:absolute;
-  top:0px;
-  margin:0;
-  padding:0;
+  display:    block;
+  position:   absolute;
+  width:      90px;
+  height:   1000px;
+  top:         0px;
+  margin: 0; padding: 0;
 }
+
 div.cost_display ul.list li {
-  border-right-width:1px;
-  border-right-style:solid;	
+  border-right-width: 1px;
+  border-right-style: solid;	
 }
+
 div.cost_display ul.list:last-child li {
-  border-left-width:1px;
-  border-left-style:solid;	
+  border-left-width: 1px;
+  border-left-style: solid;	
 }
+
 #display p.cost_display span {
-  background:#000;
-  display:block;
-  float:right;
-  width:100px;
+  background: #000;
+  display:    block;
+  float:      right;
+  width:      100px;
 }
+
 #display p.cost_display span:first-child {
-  -moz-border-radius-topRight:10px;
-  -moz-border-radius-bottomRight:10px;
+  -moz-border-radius-topRight:    10px;
+  -moz-border-radius-bottomRight: 10px;
 }
+
 #display p.cost_display span:last-child {
-  -moz-border-radius-topRight:10px;
-  -moz-border-radius-bottomRights:10px;
+  -moz-border-radius-topRight:    10px;
+  -moz-border-radius-bottomRight: 10px;
 }
 
 #display div.cost_display,
 div.cost_display ul.list,
 #display p.cost_display span,
 div.cost_display ul.active li  {
-  border-color:#272727;
+  border-color: #272727;
 }
 div.cost_display ul.list {
-  color:#272727;	
+  color: #272727;	
 }
 div.cost_display ul.active {
-  color:#FFF;
+  color: #FFF;
 }
 
 div.cost_display .dollar_sign {
-  position:absolute;
-  top:-18px;
-  left:17px;
-  font-size:1.2em;
-  color:#084a01;
+  position: absolute;
+  top:       -18px;
+  left:       17px;
+  font-size: 1.2em;
+  color:     #084a01;
 }
 
 form.stop input {
-	font-size:2em;
+	font-size: 2em;
 }
