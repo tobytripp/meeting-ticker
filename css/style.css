@@ -21,9 +21,16 @@ h3 { font-size: 1.0em; }
 
 p { 
   font-size: 1.0em;
-  padding: 0.2em;
-  margin:  0;
+  padding:   0.2em;
+  margin:    0;
 }
+
+#form > p {
+  color: #F5DEB3;
+  font-weight: normal;
+  font-size:   95%;
+}
+#form a   { color: #F5DEB3; }
 
 .small { font-size: 0.6em; }
 
@@ -40,7 +47,7 @@ p {
 }
 
 form.setup {
-  background: wheat;
+  background: #F5DEB3;
   padding:    1em;
   margin:     2em auto;
   min-width: 14em;
