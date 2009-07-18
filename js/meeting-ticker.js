@@ -61,7 +61,7 @@ function valid( data ) {
   var valid   = false;
   
   for( key in data ) {    
-    var error = $("dd:has(:input[name=" + key + "])").prev( ".error" );
+    var error = $("dd:has(:input[name=" + key + "])").find( ".error" );
     
     if( isNaN( data[key] ) ) {
       error.text( "Must be a number" ).show();

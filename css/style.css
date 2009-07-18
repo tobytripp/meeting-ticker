@@ -7,12 +7,6 @@ body {
   font-size: 18px;
 }
 
-#test_box {
-  width:  8em;
-  height: 8em;
-  background-color: white;
-}
-
 h1, h2, h3 {
   margin: 0; padding: 0;
   letter-spacing: -0.05em;
@@ -62,27 +56,31 @@ form dt {
   clear: both;
   float: left;
   text-align: right;
-  width: 10em;
+  height: 2.5em;
+  width:  11em;
   margin: 0;
   margin-left: 1.5em;
   padding-top: 0.1em;
-  margin-bottom: 1em;
 }
 
 form dd {
-  float: left;
+  text-align: left;
+  margin-left:  13em;
+  margin-bottom: 1em;
 }
 
 dd input { 
+  margin: 0;
   width:     7em;
   font-size: 1em;	 
 }
 
-form p {
-  clear: both;
+.error {
+  color:       red;
+  display:    none;
 }
 
-.error { color: red; display: none; }
+.small { font-size: 0.4em; }
 
 #display div.cost_display {
   background:   #000;

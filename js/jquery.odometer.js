@@ -10,7 +10,7 @@ $.widget( "ui.odometer", {
     this.columns = this._addLists( this.element, this.options.columns );
     if( this.options.prefix ) {
       var prefix = $("<span/>").text( this.options.prefix ).addClass( "prefix" );
-      $(this.element).prepend( prefix );
+      $(this.element).append( prefix );
     }
     
     this.value( this.options.initialValue );
@@ -36,6 +36,8 @@ $.widget( "ui.odometer", {
   },
   
   setColumn: function( index, value ) {
+    if( index > this.columnCount ) { return; }
+    
     if( value == '.' ) {
       $( this.columns[index] ).animate({
         top: -( 10 * $(this.element).height() )
@@ -56,6 +58,10 @@ $.widget( "ui.odometer", {
     var containerHeight = this.element.height();
     var fontSize    = (containerHeight - containerHeight * 0.10);
     var columnWidth = fontSize * 0.75
+    var maxColumns  = Math.round( this.element.width() / columnWidth ) - 1;
+    this.columnCount = Math.min( columns, maxColumns );
+    
+    console.log( maxColumns );
     
     this.element.css({
       'font-size': fontSize + 'px'
@@ -67,7 +73,7 @@ $.widget( "ui.odometer", {
         width( columnWidth + 'px' );
     }
     
-    for( var i = 1; i <= columns; i++ ) {
+    for( var i = 1; i <= this.columnCount; i++ ) {
       var ul = $( "<ul/>" ).addClass( "odometer_column" ).
         css({ right: columnWidth * (i - 1)});
       
@@ -84,9 +90,6 @@ $.widget( "ui.odometer", {
       uls.push( ul )
     }
     
-    console.log( this.element.width() );
-    console.log( this.element.height() );
-    
     return uls;
   }
   
@@ -99,7 +102,7 @@ $.extend( $.ui.odometer, {
     prefix:        "$",
     initialValue:  0.00
   },
-  getter: "value"
+  getter: ""
 });
 
 })(jQuery);

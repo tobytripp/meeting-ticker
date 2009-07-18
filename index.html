@@ -23,23 +23,28 @@
   <form class="setup" accept-charset="utf-8">
   	<dl>
   	  <dt><label for="attendees">Number of Attendees:</label></dt>
-  	  <dd class="error"></dd>
   	  <dd>
-  		<input id="attendees" class="watermark" type="text" name="attendees"
-  		   value="" title="count"/>
+    		<input id="attendees" class="watermark" type="text" name="attendees"
+    		   value="" title="count"/>
+    	  <p class="error small"></p>
   	  </dd>
 	  
-  	  <dt><label for="hourly_rate">Average Hourly Salary:</label></dt>
-  	  <dd class="error"></dd>
+  	  <dt>
+  	    <label for="hourly_rate">Average Hourly Rate:</label>
+  	    <p class="small">
+  	      Be sure to include overhead costs like facilities and benefits.
+  	    </p>
+	    </dt>
   	  <dd>
-  		<input id="hourly_rate" class="watermark" type="text"
-  		   name="hourly_rate" value="" title="guess (200?)" />
+    		<input id="hourly_rate" class="watermark" type="text"
+    		   name="hourly_rate" value="" title="guess (200?)" />
+    	  <p class="error small"></p>
   	  </dd>
 	  
   	  <dt><label for="start_time">The Meeting started at:</label></dt>
-  	  <dd class="error"></dd>
   	  <dd>
-  		<input id="start_time" type="text" name="start_time" value="" />
+    		<input id="start_time" type="text" name="start_time" value="" />
+    	  <p class="error small"></p>
   	  </dd>
   	</dl>
 	
@@ -52,6 +57,6 @@
   	<form class="stop"><input type="submit" value="stop the bleeding"></form>
   </div>
   
-  <div id="test_box">X</div>
+  <div id="test_box" class="odometer" style="height: 14px"></div>
 </body>
 </html>

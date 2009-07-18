@@ -48,8 +48,10 @@
 
 .odometer .prefix {
   position: absolute;
-  top:       -18px;
-  left:       17px;
+  top:      -0.1em;
+  left:        0px;
   font-size: 1.2em;
   color:     #084a01;
+  width:     0.6em;
+/*  background-color: black;*/
 }
