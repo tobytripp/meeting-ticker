@@ -83,26 +83,10 @@ function update( element, rate_per_hour ) {
   var rate_per_second = rate_per_hour / 60 / 60;
   
   var current_total   = seconds_elapsed * rate_per_second;
-  var cost_html = '';
-  var current_total = current_total.toFixed(2);
-  for(var a = current_total.length - 1; a >= 0; a--) {
-    translateDigitToList(a, current_total);
-  }
+  
+  $(".odometer").odometer( "value", current_total );
 }
 
-function translateDigitToList( total_index, total ) {
-  var index = (total.length - 1) - total_index;
-  if( total[total_index] == '.' ) {
-  	$(uls[index]).animate({
-  	  top: -(10 * $('.cost_display').height())
-  	});
-  } else {
-    $(uls[index]).animate({
-      top: -( total[total_index] * $('.cost_display').height() )
-    }, {duration:75 });
-  }
-  $(uls[index]).addClass( 'active' );
-}
 
 $(document).ready( function() {
   var timer = null;
@@ -122,6 +106,8 @@ $(document).ready( function() {
       $("#started_at").text( "(we began at " + start_time.toLocaleTimeString() + ")" );
       $("#display").fadeIn( 1500 );
     }
+    
+    $(".odometer").odometer();
     
     return false;
   } );
