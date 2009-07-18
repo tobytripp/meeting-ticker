@@ -20,8 +20,8 @@
   position: absolute;
   border-color: #272727;
   
-  width:    90px;
-  height: 1800px;
+  width:     1em;
+  height:   14em;
   
   top: 0;
   margin: 0; padding: 0;
@@ -35,10 +35,11 @@
 .odometer ul.active li {
   color: #FFF;
 }
+
 .odometer ul.odometer_column li span {
   display: block;
   float:   right;
-  width:   100px;
+  width:   1em;
 }
 .odometer ul ul.odometer_column:last-child {
   border-left-width: 1px;

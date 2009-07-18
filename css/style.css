@@ -3,6 +3,14 @@ body {
   background: #6E0911;
   color:      #757890;
   text-align: center;
+  
+  font-size: 18px;
+}
+
+#test_box {
+  width:  8em;
+  height: 8em;
+  background-color: white;
 }
 
 h1, h2, h3 {
