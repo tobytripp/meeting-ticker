@@ -10,7 +10,7 @@
   <script src="js/jquery.clockpick.1.2.1.packed.js" type="text/javascript"></script>
   <script src="js/jquery.validate.min.js"      type="text/javascript"></script>
   
-  <script src="js/jquery.odometer.js" type="text/javascript"></script>
+  <script src="js/odometer/jquery.odometer.js" type="text/javascript"></script>
   <script src="js/meeting-ticker.js"  type="text/javascript"></script>
 	
   <link rel="stylesheet" href="css/clockpick.css"
@@ -22,7 +22,7 @@
 </head>
 
 <body>
-<div class="content">  
+<div id="form">
   <form class="setup" accept-charset="utf-8">
   	<dl>
   	  <dt><label for="attendees">Number of Attendees:</label></dt>
@@ -62,12 +62,15 @@
   	<p><input type="submit" value="Start &rarr;"></p>
   </form>
   
-  <div id="display">
-  	<h1>This Meeting Has Cost</h1>
-  	<div class="odometer"></div>
-  	<p id="started_at" class="small"></p>
-  	<form class="stop"><input type="submit" value="stop the bleeding"></form>
-  </div>
+  <p>Written by Toby Tripp, Lydia Tripp, and <a href="http://www.royhere.com">Roy Kolak</a>.</p>
+  <p>Fork this project on <a href="http://github.com/tobytripp/meeting-ticker/">GitHub</a>.</p>
+</div>
+  
+<div id="display">
+	<h1>This Meeting Has Cost</h1>
+	<div class="odometer"></div>
+	<p id="started_at" class="small"></p>
+	<form class="stop"><input type="submit" value="stop the bleeding"></form>
 </div>
 </body>
 </html>

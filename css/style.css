@@ -41,6 +41,14 @@ p {
   font-size: 1.2em;
 }
 
+#form > p {
+  color: #F5DEB3;
+  font-size: 95%;
+  font-weight: normal;
+}
+
+#form a { color: #F5DEB3; }
+
 form.setup {
   background: wheat;
   padding:    1em;
@@ -68,7 +76,7 @@ form dd {
   text-align:   right;
   margin-left:   13em;
   margin-bottom:  1em;
-  width:          40%;
+  width:          37%;
 }
 
 dd input { 

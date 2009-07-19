@@ -124,41 +124,4 @@ function update( element, rate_per_hour ) {
   $(".odometer").odometer( "value", current_total );
 }
 
-function require( url ) {
-  var head   = document.getElementsByTagName("head")[0];
-  var script = document.createElement("script");
-  script.src = url;
-  
-  console.log( "require " + url );
-  head.appendChild( script );
-  return script;
-}
-
-$(document).ready( function() {
-  if( window.location.search.match( "test" ) ) {
-    $.each( [
-      "jquery.fn.js",
-      "jquery.print.js"
-    ], function( i, path ) { require( "js/screw.unit/lib/" + path ); });
-
-    var builder = require( "js/screw.unit/lib/screw.builder.js" );
-    builder.onload = builder.onreadystatechange = function() {
-      $.each( [
-        "screw.matchers.js",
-        "screw.events.js",
-        "screw.behaviors.js"
-      ], function( i, path ) { require( "js/screw.unit/lib/" + path ); });
-
-      require( "spec/ticker_spec.js" );
-    }
-
-    var head  = document.getElementsByTagName("head")[0];
-    var link  = document.createElement( "link" );
-    link.rel  = "stylesheet";
-    link.href = "js/screw.unit/lib/screw.css";
-
-    head.appendChild( link );
-  } else {
-    init();
-  }
-});
+$(document).ready( function() { init(); });
