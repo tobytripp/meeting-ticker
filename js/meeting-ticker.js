@@ -40,7 +40,7 @@ function init() {
   
       timer = begin( this );
       if( timer ) {
-        $(this).hide();
+        $(this).parent().hide();
         $("#started_at").text( "(we began at " + start_time.toLocaleTimeString() + ")" );
         $("#display").fadeIn( 1500 );
         $(".odometer").odometer({ prefix: self.data.units });

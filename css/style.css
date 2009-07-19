@@ -23,11 +23,11 @@ h3 { font-size: 1.0em; }
 
 p { 
   font-size: 1.0em;
-  padding: 0.2em;
-  margin:  0;
+  padding:   0.2em;
+  margin:    0;
 }
 
-.small { font-size: 0.6em; }
+.small { font-size: 70%; }
 
 #display { 
   background: #470F14;
@@ -35,10 +35,9 @@ p {
   margin:  2em;
   -moz-border-radius:    30px;
   -webkit-border-radius: 30px;
-}
-
-#display p {
-  font-size: 1.2em;
+  
+  -webkit-box-shadow: 5px 5px 5px rgba( 0, 0, 0, 0.5 );
+  -moz-box-shadow: 5px 5px 5px rgba( 0, 0, 0, 0.5 );
 }
 
 #form > p {
@@ -46,6 +45,7 @@ p {
   font-size: 95%;
   font-weight: normal;
 }
+#form > p.small { font-size: 70%; }
 
 #form a { color: #F5DEB3; }
 
@@ -70,6 +70,7 @@ form dt {
   padding-top: 0.1em;
 }
 
+form dt p.small { font-size: 40%; }
 form dt, form dd { height: 1.5em; }
 
 form dd {
@@ -89,23 +90,6 @@ dd input {
 label.error {
   display:     block;
   font-size:   0.5em;
-}
-
-.small { font-size: 0.4em; }
-
-#display div.cost_display {
-  background:   #000;
-  font-family:  Times New Roman;
-  font-size:    8em;
-  margin:       19px 0px;
-  padding:      0;
-  border-width: 1px; 
-  border-style: solid;
-  -moz-border-radius:    10px;
-  -webkit-border-radius: 10px;
-  height:       148px;
-  position:     relative;
-  overflow:     hidden;
 }
 
 form.stop input {
