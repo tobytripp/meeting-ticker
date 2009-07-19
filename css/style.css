@@ -3,6 +3,8 @@ body {
   background: #6E0911;
   color:      #757890;
   text-align: center;
+  
+  font-size: 18px;
 }
 
 h1, h2, h3 {
@@ -25,14 +27,7 @@ p {
   margin:    0;
 }
 
-#form > p {
-  color: #F5DEB3;
-  font-weight: normal;
-  font-size:   95%;
-}
-#form a   { color: #F5DEB3; }
-
-.small { font-size: 0.6em; }
+.small { font-size: 70%; }
 
 #display { 
   background: #470F14;
@@ -40,11 +35,19 @@ p {
   margin:  2em;
   -moz-border-radius:    30px;
   -webkit-border-radius: 30px;
+  
+  -webkit-box-shadow: 5px 5px 5px rgba( 0, 0, 0, 0.5 );
+  -moz-box-shadow: 5px 5px 5px rgba( 0, 0, 0, 0.5 );
 }
 
-#display p {
-  font-size: 1.2em;
+#form > p {
+  color: #F5DEB3;
+  font-size: 95%;
+  font-weight: normal;
 }
+#form > p.small { font-size: 70%; }
+
+#form a { color: #F5DEB3; }
 
 form.setup {
   background: #F5DEB3;
@@ -61,100 +64,32 @@ form dt {
   clear: both;
   float: left;
   text-align: right;
-  width: 10em;
+  width:  11em;
   margin: 0;
   margin-left: 1.5em;
   padding-top: 0.1em;
-  margin-bottom: 1em;
 }
 
+form dt p.small { font-size: 40%; }
+form dt, form dd { height: 1.5em; }
+
 form dd {
-  float: left;
+  text-align:   right;
+  margin-left:   13em;
+  margin-bottom:  1em;
+  width:          37%;
 }
 
 dd input { 
+  margin: 0;
   width:     7em;
   font-size: 1em;	 
 }
 
-form p {
-  clear: both;
-}
-
-.error { color: red; display: none; }
-
-#display div.cost_display {
-  background:   #000;
-  font-family:  Times New Roman;
-  font-size:    8em;
-  margin:       19px 0px;
-  padding:      0;
-  border-width: 1px; 
-  border-style: solid;
-  -moz-border-radius:    10px;
-  -webkit-border-radius: 10px;
-  height:       148px;
-  position:     relative;
-  overflow:     hidden;
-}
-div.cost_display ul li {
-  list-style-type: none;
-}
-div.cost_display ul.list {
-  display:    block;
-  position:   absolute;
-  width:      90px;
-  height:   1000px;
-  top:         0px;
-  margin: 0; padding: 0;
-}
-
-div.cost_display ul.list li {
-  border-right-width: 1px;
-  border-right-style: solid;	
-}
-
-div.cost_display ul.list:last-child li {
-  border-left-width: 1px;
-  border-left-style: solid;	
-}
-
-#display p.cost_display span {
-  background: #000;
-  display:    block;
-  float:      right;
-  width:      100px;
-}
-
-#display p.cost_display span:first-child {
-  -moz-border-radius-topRight:    10px;
-  -moz-border-radius-bottomRight: 10px;
-}
-
-#display p.cost_display span:last-child {
-  -moz-border-radius-topRight:    10px;
-  -moz-border-radius-bottomRight: 10px;
-}
-
-#display div.cost_display,
-div.cost_display ul.list,
-#display p.cost_display span,
-div.cost_display ul.active li  {
-  border-color: #272727;
-}
-div.cost_display ul.list {
-  color: #272727;	
-}
-div.cost_display ul.active {
-  color: #FFF;
-}
-
-div.cost_display .dollar_sign {
-  position: absolute;
-  top:       -18px;
-  left:       17px;
-  font-size: 1.2em;
-  color:     #084a01;
+.error { color: red; }
+label.error {
+  display:     block;
+  font-size:   0.5em;
 }
 
 form.stop input {
