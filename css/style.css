@@ -56,17 +56,19 @@ form dt {
   clear: both;
   float: left;
   text-align: right;
-  height: 2.5em;
   width:  11em;
   margin: 0;
   margin-left: 1.5em;
   padding-top: 0.1em;
 }
 
+form dt, form dd { height: 1.5em; }
+
 form dd {
-  text-align: left;
-  margin-left:  13em;
-  margin-bottom: 1em;
+  text-align:   right;
+  margin-left:   13em;
+  margin-bottom:  1em;
+  width:          40%;
 }
 
 dd input { 
@@ -75,9 +77,10 @@ dd input {
   font-size: 1em;	 
 }
 
-.error {
-  color:       red;
-  display:    none;
+.error { color: red; }
+label.error {
+  display:     block;
+  font-size:   0.5em;
 }
 
 .small { font-size: 0.4em; }
@@ -95,65 +98,6 @@ dd input {
   height:       148px;
   position:     relative;
   overflow:     hidden;
-}
-div.cost_display ul li {
-  list-style-type: none;
-}
-div.cost_display ul.list {
-  display:    block;
-  position:   absolute;
-  width:      90px;
-  height:   1000px;
-  top:         0px;
-  margin: 0; padding: 0;
-}
-
-div.cost_display ul.list li {
-  border-right-width: 1px;
-  border-right-style: solid;	
-}
-
-div.cost_display ul.list:last-child li {
-  border-left-width: 1px;
-  border-left-style: solid;	
-}
-
-#display p.cost_display span {
-  background: #000;
-  display:    block;
-  float:      right;
-  width:      100px;
-}
-
-#display p.cost_display span:first-child {
-  -moz-border-radius-topRight:    10px;
-  -moz-border-radius-bottomRight: 10px;
-}
-
-#display p.cost_display span:last-child {
-  -moz-border-radius-topRight:    10px;
-  -moz-border-radius-bottomRight: 10px;
-}
-
-#display div.cost_display,
-div.cost_display ul.list,
-#display p.cost_display span,
-div.cost_display ul.active li  {
-  border-color: #272727;
-}
-div.cost_display ul.list {
-  color: #272727;	
-}
-div.cost_display ul.active {
-  color: #FFF;
-}
-
-div.cost_display .dollar_sign {
-  position: absolute;
-  top:       -18px;
-  left:       17px;
-  font-size: 1.2em;
-  color:     #084a01;
 }
 
 form.stop input {

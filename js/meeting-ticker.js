@@ -2,15 +2,80 @@ var current_amount = 0;
 var start_time = null;
 var uls = [];
 
+function init() {
+  var timer = null;
+  var self = this;
+  
+  $("#display").hide();
+  $("input.watermark").each( function() {
+    $(this).watermark( $(this).attr( "title" ) );
+  } );
+   
+  $('form.setup').validate({
+    rules: {
+      attendees: {
+        required: true,
+        min:      1,
+        number:   true
+      },
+      hourly_rate: {
+        required: true,
+        number:   true,
+        min:      0.01
+      },
+      start_time: "required"
+    },
+    
+    messages: {
+      attendees:   "Must be a number greater than zero.",
+      hourly_rate: "Must be a number greater than zero."
+    }
+  });
+  
+  $('form.setup').submit( function( event ) {
+    event.preventDefault();
+    
+    if( $(this).valid() ) {
+      $(".error").hide();
+  
+      timer = begin( this );
+      if( timer ) {
+        $(this).hide();
+        $("#started_at").text( "(we began at " + start_time.toLocaleTimeString() + ")" );
+        $("#display").fadeIn( 1500 );
+        $(".odometer").odometer({ prefix: self.data.units });
+      }
+    }
+    return false;
+  } );
+  
+  $('form.stop').submit( function( event ) {
+    event.preventDefault();
+    clearInterval( timer );
+    return false;
+  });
+  
+  var now = new Date();
+  var minutes = now.getMinutes();
+  if( minutes < 10 ) minutes = "0" + minutes;
+  
+  $("#start_time").eq(0).val( now.getHours() + ":" + minutes );
+  
+  $("#start_time").clockpick({
+    military: true,
+    layout  : "horizontal"
+  });
+  
+}
+
 function begin( form ) {
-  var data = {
-    hourly_rate: $("input[name=hourly_rate]").val(),
-    attendees:   $("input[name=attendees]").val()
+  this.data = {
+    hourly_rate: $(form).find("input[name=hourly_rate]").val(),
+    attendees:   $(form).find("input[name=attendees]").val(),
+    units:       $(form).find("select").val()
   }
   var display = $(".cost_display");
 
-  if( !valid( data ) ) return false;
-  
   var hourly_burn  = Number( data.hourly_rate ) * Number( data.attendees );
 
   var selected_time_segments = $("#start_time").eq(0).val().split(':');
@@ -25,36 +90,8 @@ function begin( form ) {
   var timer = setInterval( function() {
     update( display, hourly_burn );
   }, 100);
- 
-  insertNumberLists();
 
   return timer;
-}
-
-function insertNumberLists() {
-  for( var a = 1; a < 11; a++ ) {
-  	var ul = document.createElement( 'ul' );
-  	$(ul).addClass( 'list' );
-  	$(ul).attr( 'id', 'list_' + a );
-  	$(ul).css({ right:90 * (a - 1) });
-  	
-    for(var b = 0; b < 10; b++) {     
-      var li   = document.createElement( 'li' );
-  	  var span = document.createElement( 'span' );
-  	  $(span).text( b );
-  	  $(span).appendTo( li );
-  	  $(li).appendTo( ul );
-    }
-    
-    var li   = document.createElement( 'li' );
-  	var span = document.createElement( 'span' );
-  	$(span).text( '.' );
-  	$(span).appendTo( li );
-  	$(li).appendTo( ul );
-
-  	uls.push( ul );
-  	$(ul).appendTo( $('.cost_display') );
-  }
 }
 
 function valid( data ) {
@@ -87,45 +124,41 @@ function update( element, rate_per_hour ) {
   $(".odometer").odometer( "value", current_total );
 }
 
+function require( url ) {
+  var head   = document.getElementsByTagName("head")[0];
+  var script = document.createElement("script");
+  script.src = url;
+  
+  console.log( "require " + url );
+  head.appendChild( script );
+  return script;
+}
 
 $(document).ready( function() {
-  var timer = null;
-  $("#display").hide();
-  $("input.watermark").each( function() {
-    $(this).watermark( $(this).attr( "title" ) );
-  } );
-   
-  $('form.setup').submit( function( event ) {
-    event.preventDefault();
-    
-    $(".error").hide();
-    
-    timer = begin( this );
-    if( timer ) {
-      $(this).hide();
-      $("#started_at").text( "(we began at " + start_time.toLocaleTimeString() + ")" );
-      $("#display").fadeIn( 1500 );
+  if( window.location.search.match( "test" ) ) {
+    $.each( [
+      "jquery.fn.js",
+      "jquery.print.js"
+    ], function( i, path ) { require( "js/screw.unit/lib/" + path ); });
+
+    var builder = require( "js/screw.unit/lib/screw.builder.js" );
+    builder.onload = builder.onreadystatechange = function() {
+      $.each( [
+        "screw.matchers.js",
+        "screw.events.js",
+        "screw.behaviors.js"
+      ], function( i, path ) { require( "js/screw.unit/lib/" + path ); });
+
+      require( "spec/ticker_spec.js" );
     }
-    
-    $(".odometer").odometer();
-    
-    return false;
-  } );
-  
-  $('form.stop').submit( function( event ) {
-    event.preventDefault();
-    clearInterval( timer );
-    return false;
-  });
-  
-  var now = new Date();
-  var minutes = now.getMinutes();
-  if( minutes < 10 ) minutes = "0" + minutes;
-  
-  $("#start_time").eq(0).val( now.getHours() + ":" + minutes );
-  
-  $("#start_time").clockpick({
-    military: true,
-    layout  : "horizontal"
-  });
- } );
+
+    var head  = document.getElementsByTagName("head")[0];
+    var link  = document.createElement( "link" );
+    link.rel  = "stylesheet";
+    link.href = "js/screw.unit/lib/screw.css";
+
+    head.appendChild( link );
+  } else {
+    init();
+  }
+});

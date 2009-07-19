@@ -56,12 +56,10 @@ $.widget( "ui.odometer", {
     this.element.empty();
     
     var containerHeight = this.element.height();
-    var fontSize    = (containerHeight - containerHeight * 0.10);
-    var columnWidth = fontSize * 0.75
-    var maxColumns  = Math.round( this.element.width() / columnWidth ) - 1;
+    var fontSize     = (containerHeight - containerHeight * 0.10);
+    var columnWidth  = fontSize * 0.75
+    var maxColumns   = Math.round( this.element.width() / columnWidth ) - 1;
     this.columnCount = Math.min( columns, maxColumns );
-    
-    console.log( maxColumns );
     
     this.element.css({
       'font-size': fontSize + 'px'
@@ -82,7 +80,6 @@ $.widget( "ui.odometer", {
         ul.append( li );
       }
       
-      console.log( "set height to " + $(this.element).height() + "px" );
       var li = $("<li/>").append( span( '.' ) );
       ul.append( li );
       
