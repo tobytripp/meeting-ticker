@@ -11,7 +11,42 @@ function init() {
     $(this).watermark( $(this).attr( "title" ) );
   } );
    
-  $('form.setup').validate({
+  var setupForm = $('form.setup');
+
+  if (typeof navigator != null) {
+    var lang = navigator.language ? navigator.language : navigator.userLanguage;
+    if (lang) {
+      var unit = null;
+      lang = lang.toLowerCase().split('-');
+      if (lang[0] === 'en' && lang[1] === 'gb') unit = '£';
+      else switch (lang[0]) {
+        case 'ca':
+        case 'de':
+        case 'el':
+        case 'es':
+        case 'et':
+        case 'fi':
+        case 'fr':
+        case 'ga':
+        case 'it':
+        case 'lb':
+        case 'mt':
+        case 'nl':
+        case 'pt':
+        case 'sk':
+        case 'sl':
+        case 'sv':
+          unit = '€';
+          break;
+        case 'ja':
+          unit = '¥';
+          break;
+      }
+      if (unit) setupForm.find('select').val(unit);
+    }
+  }
+
+  setupForm.validate({
     rules: {
       attendees: {
         required: true,
@@ -32,7 +67,7 @@ function init() {
     }
   });
   
-  $('form.setup').submit( function( event ) {
+  setupForm.submit( function( event ) {
     event.preventDefault();
     
     if( $(this).valid() ) {
