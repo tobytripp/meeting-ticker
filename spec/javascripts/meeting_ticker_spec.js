@@ -60,9 +60,33 @@ describe( "MeetingTicker", function () {
       expect( ticker.attendeeCount() ).toEqual( 26 );
     });
 
-    it( "on submit hides the form", function() {
+    it( "on submit hides the form's container", function() {
       $("form.ticker").submit();
-      expect( $("form.ticker") ).toBeHidden();
+      expect( $("div#form") ).toBeHidden();
+    });
+  });
+
+  describe( "start_time", function() {
+    var startTime= new Date();
+
+    beforeEach( function() {
+      spyOn( MeetingTicker.Time, 'now' ).andReturn( startTime );
+    });
+
+    it( "defaults to the current time", function() {
+      expect( $("#start_time").val() ).toEqual( startTime.getHours() + ":" + startTime.getMinutes() );
+    });
+
+    it( "is updated from the #start_time input" );
+  });
+
+  describe( "#start", function() {
+    beforeEach( function() {
+      ticker.start();
+    });
+
+    it( "updates the 'started at' text", function() {
+      // expect( $("#started_at") ).toHaveText( "(we began at " );
     });
   });
 });

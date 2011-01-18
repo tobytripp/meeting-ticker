@@ -1,5 +1,8 @@
-;(function($) {
-  function MeetingTicker( form, settings ) {
+;
+var MeetingTicker;
+
+(function($) {
+  MeetingTicker = function( form, settings ) {
     this.form     = $(form);
     this.settings = settings;
 
@@ -36,7 +39,7 @@
     },
 
     start: function() {
-      this.form.hide();
+      this.form.parent().hide();
       this.display().show();
     },
 
@@ -69,10 +72,16 @@
       }
     });
   }
+
+  MeetingTicker.Time = function() {
+  }
+
+  MeetingTicker.Time.now = function() {
+    return new Date();
+  }
 })(jQuery);
 
 $(function() { $('.ticker').meetingTicker() });
-
 
 var current_amount = 0;
 var start_time = null;
