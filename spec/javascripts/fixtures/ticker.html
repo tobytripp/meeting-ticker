@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>ticker</title>
+	<meta name="generator" content="TextMate http://macromates.com/">
+	<meta name="author" content="Toby Tripp">
+</head>
+<body>
+  <div id="form">
+    <form class="ticker">
+      <dl>
+        <dd><input id="attendees" name="attendees" type="text" /></dd>
+        <dd>
+    	    <select name="units" tabindex="3">
+    	      <option selected="selected">$</option>
+    	      <option>&pound;</option>
+    	      <option>&euro;</option>
+    	      <option>&yen;</option>
+    	    </select>
+      		<input id="hourly_rate" type="text"
+      		   name="hourly_rate" value="" />
+    	  </dd>
+      </dl>
+
+      <p><input type="submit" value="Start"/></p>
+    </form>
+  </div>
+  <div id="display">
+    <div class="odometer"></div>
+    <form class="stop"><input type="submit" value="stop the bleeding"></form>
+  </div>
+</body>
+</html>
