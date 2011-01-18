@@ -6,13 +6,13 @@
   <title>Meeting Ticker</title>
   <script src="js/jquery-1.3.2.min.js"         type="text/javascript"></script>
   <script src="js/jquery-ui-1.7.2.core.min.js" type="text/javascript"></script>
-  <script src="js/jquery.watermark.js"         type="text/javascript"></script>	 
+  <script src="js/jquery.watermark.js"         type="text/javascript"></script>
   <script src="js/jquery.clockpick.1.2.1.packed.js" type="text/javascript"></script>
   <script src="js/jquery.validate.min.js"      type="text/javascript"></script>
-  
+
   <script src="js/odometer/jquery.odometer.js" type="text/javascript"></script>
   <script src="js/meeting-ticker.js"  type="text/javascript"></script>
-	
+
   <link rel="stylesheet" href="css/clockpick.css"
         type="text/css"  media="screen" charset="utf-8" />
   <link rel="stylesheet" href="css/odometer.css"
@@ -23,52 +23,52 @@
 
 <body>
 <div id="form">
-  <form class="setup" accept-charset="utf-8">
-  	<dl>
-  	  <dt><label for="attendees">Number of Attendees:</label></dt>
-  	  <dd>
-    		<input id="attendees"
-    		   class="watermark"
-    		   tabindex="1"
-    		   type="text" name="attendees"
-    		   value="" title="count" />
-  	  </dd>
-	  
-  	  <dt>
-  	    <label for="hourly_rate">Average Hourly Rate:</label>
-  	    <p class="small">
-  	      Be sure to include overhead costs like facilities and benefits.
-  	    </p>
-	    </dt>
-  	  <dd>
-  	    <select name="units" tabindex="3">
-  	      <option selected="selected">$</option>
-  	      <option>&pound;</option>
-  	      <option>&euro;</option>
-  	      <option>&yen;</option>
-  	    </select>
-    		<input id="hourly_rate"
-    		   class="watermark" type="text"
-    		   tabindex="2"
-    		   name="hourly_rate" value="" title="guess (200?)" />
-  	  </dd>
-	  
-  	  <dt><label for="start_time">The Meeting started at:</label></dt>
-  	  <dd>
-		<input id="start_time" type="text" 
-			   name="start_time" value="" tabindex="4"/>
-  	  </dd>
-  	</dl>
-	
-  	<p><input type="submit" value="Start &rarr;"></p>
+  <form class="setup ticker" accept-charset="utf-8">
+    <dl>
+      <dt><label for="attendees">Number of Attendees:</label></dt>
+      <dd>
+    	<input id="attendees"
+    	       class="watermark"
+    	       tabindex="1"
+    	       type="text" name="attendees"
+    	       value="" title="count" />
+      </dd>
+
+      <dt>
+  	<label for="hourly_rate">Average Hourly Rate:</label>
+  	<p class="small">
+  	  Be sure to include overhead costs like facilities and benefits.
+  	</p>
+      </dt>
+      <dd>
+  	<select name="units" tabindex="3">
+  	  <option selected="selected">$</option>
+  	  <option>&pound;</option>
+  	  <option>&euro;</option>
+  	  <option>&yen;</option>
+  	</select>
+    	<input id="hourly_rate"
+    	       class="watermark" type="text"
+    	       tabindex="2"
+    	       name="hourly_rate" value="" title="guess (200?)" />
+      </dd>
+
+      <dt><label for="start_time">The Meeting started at:</label></dt>
+      <dd>
+	<input id="start_time" type="text"
+	       name="start_time" value="" tabindex="4"/>
+      </dd>
+    </dl>
+
+    <p><input type="submit" value="Start &rarr;"></p>
   </form>
-  
+
   <p>Written by Toby Tripp, Lydia Tripp, and <a href="http://www.royhere.com">Roy Kolak</a>.</p>
   <p>Fork this project on <a href="http://github.com/tobytripp/meeting-ticker/">GitHub</a>.</p>
-  
+
   <p class="small">If this works in Internet Explorer, it is purely by accident.</p>
 </div>
-  
+
   <div id="display">
   	<h1>This Meeting Has Cost</h1>
   	<div class="odometer"></div>
