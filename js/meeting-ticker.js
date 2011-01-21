@@ -1,5 +1,4 @@
-;
-var MeetingTicker;
+;var MeetingTicker;
 
 (function($) {
   MeetingTicker = function( form, settings ) {
@@ -15,6 +14,47 @@ var MeetingTicker;
       this.display().hide();
       this.amount = 0;
 
+      this._bindEvents();
+      this._initForm();
+    },
+
+    display: function() {
+      if( !this.settings.display ) {
+        this.settings.display = $( this.settings.displaySelector );
+      }
+      return this.settings.display;
+    },
+
+    start: function() {
+      this.form.parent().hide();
+
+      $("#started_at").text( "(we began at " + this.startTime().toString() + ")" );
+
+      this.display().show();
+    },
+
+    hourlyRate: function( rate ) {
+      if( rate ) { this.rate = parseFloat( rate ); }
+      return this.rate;
+    },
+
+    attendeeCount: function( count ) {
+      if( count ) { this.count = parseInt( count ); }
+      return this.count;
+    },
+
+    startTime: function( time ) {
+      if( time ) {
+        var start = this.form.find( "input[name=start_time]" );
+        this.startedAt = new MeetingTicker.Time( time );
+        start.val( this.startedAt.toString() );
+      }
+
+      return this.startedAt;
+    },
+
+    _bindEvents: function() {
+      var self = this;
       this.form.submit( function(e) {
         e.preventDefault();
         self.start();
@@ -29,28 +69,13 @@ var MeetingTicker;
         e.preventDefault();
         self.attendeeCount( $(e.target).val() );
       });
+
     },
 
-    display: function() {
-      if( !this.settings.display ) {
-        this.settings.display = $( this.settings.displaySelector );
+    _initForm: function() {
+      if( ! this.startTime() ) {
+        this.startTime( MeetingTicker.Time.now() );
       }
-      return this.settings.display;
-    },
-
-    start: function() {
-      this.form.parent().hide();
-      this.display().show();
-    },
-
-    hourlyRate: function( rate ) {
-      if( rate ) { this.rate = parseFloat( rate ); }
-      return this.rate;
-    },
-
-    attendeeCount: function( count ) {
-      if( count ) { this.count = parseInt( count ); }
-      return this.count;
     }
   };
 
@@ -72,12 +97,27 @@ var MeetingTicker;
       }
     });
   }
+})(jQuery);
 
-  MeetingTicker.Time = function() {
+(function($) {
+  MeetingTicker.Time = function( time ) {
+    if( time && time.getHours ) {
+      this.time = time;
+    } else if( typeof time === "number" ) {
+      this.time = new Date( time );
+    } else {
+      this.time = new Date();
+    }
   }
 
   MeetingTicker.Time.now = function() {
-    return new Date();
+    return new MeetingTicker.Time();
+  }
+
+  MeetingTicker.Time.prototype.toString = function() {
+    var minutes = this.time.getMinutes();
+    if( minutes < 10 ) minutes = "0" + minutes;
+    return this.time.getHours() + ":" + minutes;
   }
 })(jQuery);
 
