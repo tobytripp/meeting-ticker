@@ -45,6 +45,9 @@
 
     startTime: function( time ) {
       if( time ) {
+        console.log( time );
+        console.log( new MeetingTicker.Time( time ) );
+
         var start = this.form.find( "input[name=start_time]" );
         this.startedAt = new MeetingTicker.Time( time );
         start.val( this.startedAt.toString() );
@@ -103,6 +106,8 @@
   MeetingTicker.Time = function( time ) {
     if( time && time.getHours ) {
       this.time = time;
+    } else if( time instanceof MeetingTicker.Time ) { // FIXME: smelly
+      this.time = time.time;
     } else if( typeof time === "number" ) {
       this.time = new Date( time );
     } else {

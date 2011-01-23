@@ -1,8 +1,13 @@
 describe( "MeetingTicker", function () {
   var ticker;
+  var now = new Date( Date.parse( "January 1, 1970 13:07" ) );
 
   beforeEach( function() {
     loadFixtures( 'ticker.html' );
+
+    var mnow = new MeetingTicker.Time( now );
+    spyOn( MeetingTicker.Time, 'now' ).andReturn( mnow );
+
     $('.ticker').meetingTicker();
     ticker = $('.ticker').data("meeting-ticker").ticker;
   });
@@ -83,15 +88,9 @@ describe( "MeetingTicker", function () {
   });
 
   describe( "start_time", function() {
-    var now = new Date( Date.parse( "January 1, 1970 13:07" ) );
-
-    beforeEach( function() {
-      var mnow = new MeetingTicker.Time( now );
-      spyOn( MeetingTicker.Time, 'now' ).andReturn( mnow );
-    });
 
     it( "defaults to the current time", function() {
-      //wip: expect( $("#start_time").val() ).toEqual( "13:07" );
+      expect( $("#start_time").val() ).toEqual( "13:07" );
     });
 
     it( "is updated from the #start_time input" );
@@ -103,7 +102,7 @@ describe( "MeetingTicker", function () {
     });
 
     it( "updates the 'started at' text", function() {
-      //wip: expect( $("#started_at") ).toHaveText( "(we began at " );
+      expect( $("#started_at") ).toHaveText( "(we began at 13:07)" );
     });
   });
 });
