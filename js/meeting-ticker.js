@@ -1,9 +1,14 @@
 ;var MeetingTicker;
 
 (function($) {
+  var SECONDS_PER_HOUR = 60.0 * 60.0;
+  var UPDATE_INTERVAL  = 250; // ms
+
   MeetingTicker = function( form, settings ) {
     this.form     = $(form);
     this.settings = settings;
+
+    this.odometerElement = $(".odometer");
 
     this.init();
   }
@@ -16,6 +21,7 @@
 
       this._bindEvents();
       this._initForm();
+      this._detectCurrency();
     },
 
     display: function() {
@@ -26,28 +32,66 @@
     },
 
     start: function() {
+      var self = this;
       this.form.parent().hide();
 
       $("#started_at").text( "(we began at " + this.startTime().toString() + ")" );
 
-      this.display().show();
+      this.display().fadeIn( 1500 );
+      this.odometerElement.odometer(); // TODO: {prefix: self.data.units}
+
+      this.timer = setInterval( function() {
+        self.odometerElement.trigger( "update", self.cost() );
+      }, UPDATE_INTERVAL );
+    },
+
+    stop: function() {
+      clearInterval( this.timer );
+    },
+
+    cost: function() {
+      return this.perSecondBurn() * this.elapsedSeconds();
     },
 
     hourlyRate: function( rate ) {
       if( rate ) { this.rate = parseFloat( rate ); }
+      if( !this.rate ) { throw new Error( "Rate is not set." ); }
       return this.rate;
     },
 
     attendeeCount: function( count ) {
       if( count ) { this.count = parseInt( count ); }
+      if( !this.count ) { throw new Error( "Attendee Count is not set." ); }
       return this.count;
+    },
+
+    currency: function( units ) {
+      if( units ) {
+        this.units = units;
+
+        var view = this.form.find( "select[name=units]" );
+        if( view.val() != units ) {
+          view.val( units );
+        }
+      }
+
+      return this.units;
+    },
+
+    hourlyBurn: function() {
+      return this.hourlyRate() * this.attendeeCount();
+    },
+
+    perSecondBurn: function() {
+      return this.hourlyBurn() / SECONDS_PER_HOUR;
+    },
+
+    elapsedSeconds: function() {
+      return MeetingTicker.Time.now().secondsSince( this.startTime() );
     },
 
     startTime: function( time ) {
       if( time ) {
-        console.log( time );
-        console.log( new MeetingTicker.Time( time ) );
-
         var start = this.form.find( "input[name=start_time]" );
         this.startedAt = new MeetingTicker.Time( time );
         start.val( this.startedAt.toString() );
@@ -73,12 +117,25 @@
         self.attendeeCount( $(e.target).val() );
       });
 
+      this.form.find( "select[name=units]" ).change( function( e ) {
+        e.preventDefault();
+        self.currency( $(e.target).val() );
+      });
     },
 
     _initForm: function() {
       if( ! this.startTime() ) {
         this.startTime( MeetingTicker.Time.now() );
       }
+    },
+
+    _detectCurrency: function() {
+      var currencyLookup = {
+        'en-us': "$",
+        'en-gb': "pound"
+      }
+      var language = MeetingTicker.Locale.current().language;
+      this.currency( currencyLookup[ language ] );
     }
   };
 
@@ -124,13 +181,33 @@
     if( minutes < 10 ) minutes = "0" + minutes;
     return this.time.getHours() + ":" + minutes;
   }
+
+  MeetingTicker.Time.prototype.secondsSince = function( then ) {
+    return (this.time - then.time) / 1000;
+  }
+
+
+  MeetingTicker.Locale = function( language ) {
+    if( language ) { this.language = language; return; }
+
+    if( typeof navigator != null ) {
+      this.language = navigator.language ? navigator.language : navigator.userLanguage;
+    } else {
+      this.language = "en-us"; // Fall-back
+    }
+  }
+
+  MeetingTicker.Locale.current = function() { return new MeetingTicker.Locale(); }
 })(jQuery);
 
 $(function() { $('.ticker').meetingTicker() });
 
+
+
+
+
 var current_amount = 0;
 var start_time = null;
-var uls = [];
 
 function init() {
   var timer = null;

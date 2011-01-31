@@ -1,7 +1,6 @@
 ;(function($){
 
 $.widget( "ui.odometer", {
-
   _init: function() {
     var options = this.options;
 
