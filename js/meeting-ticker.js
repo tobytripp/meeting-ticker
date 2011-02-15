@@ -38,7 +38,7 @@
       $("#started_at").text( "(we began at " + this.startTime().toString() + ")" );
 
       this.display().fadeIn( 1500 );
-      this.odometerElement.odometer(); // TODO: {prefix: self.data.units}
+      this.odometerElement.odometer({ prefix: self.currencyLabel() });
 
       this.timer = setInterval( function() {
         self.odometerElement.trigger( "update", self.cost() );
@@ -65,17 +65,19 @@
       return this.count;
     },
 
-    currency: function( units ) {
-      if( units ) {
-        this.units = units;
-
-        var view = this.form.find( "select[name=units]" );
-        if( view.val() != units ) {
-          view.val( units );
+    currency: function( newCurrency ) {
+      var view = this.form.find( "select[name=units]" );
+      if( newCurrency ) {
+        if( view.val() != newCurrency ) {
+          view.val( newCurrency );
         }
       }
 
-      return this.units;
+      return view.val();
+    },
+
+    currencyLabel: function() {
+      return this.form.find( "select[name=units] option:selected" ).text();
     },
 
     hourlyBurn: function() {
@@ -116,11 +118,6 @@
         e.preventDefault();
         self.attendeeCount( $(e.target).val() );
       });
-
-      this.form.find( "select[name=units]" ).change( function( e ) {
-        e.preventDefault();
-        self.currency( $(e.target).val() );
-      });
     },
 
     _initForm: function() {
@@ -130,13 +127,10 @@
     },
 
     _detectCurrency: function() {
-      var currencyLookup = {
-        'en-us': "$",
-        'en-gb': "pound"
-      }
-      var language = MeetingTicker.Locale.current().language;
-      this.currency( currencyLookup[ language ] );
-    }
+      var locale = MeetingTicker.Locale.current();
+      console.log( "Setting currency to " + locale.currency() );
+      this.currency( locale.currency() );
+    },
   };
 
   $.fn.meetingTicker = function( options ) {
@@ -185,15 +179,55 @@
   MeetingTicker.Time.prototype.secondsSince = function( then ) {
     return (this.time - then.time) / 1000;
   }
+})(jQuery);
 
-
+(function($) {
   MeetingTicker.Locale = function( language ) {
     if( language ) { this.language = language; return; }
 
+    var lang;
     if( typeof navigator != null ) {
-      this.language = navigator.language ? navigator.language : navigator.userLanguage;
+      lang = navigator.language ? navigator.language : navigator.userLanguage;
     } else {
-      this.language = "en-us"; // Fall-back
+      lang = "en-us"; // Fall-back
+    }
+
+    lang = lang.toLowerCase().split("-");
+    if( lang[0] === "en" ) {
+      this.language = lang[1];
+    } else {
+      this.language = lang[0];
+    }
+  }
+
+  MeetingTicker.Locale.prototype = {
+    euro:   "euro",
+    dollar: "$",
+    yen:    "yen",
+    pound:  "pound",
+
+    currency: function() {
+      return {
+        'us': this.dollar,
+        'gb': this.pound,
+        'ca': this.euro,
+        'de': this.euro,
+        'el': this.euro,
+        'es': this.euro,
+        'et': this.euro,
+        'fi': this.euro,
+        'fr': this.euro,
+        'ga': this.euro,
+        'it': this.euro,
+        'lb': this.euro,
+        'mt': this.euro,
+        'nl': this.euro,
+        'pt': this.euro,
+        'sk': this.euro,
+        'sl': this.euro,
+        'sv': this.euro,
+        'ja': this.yen
+      }[this.language];
     }
   }
 

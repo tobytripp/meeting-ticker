@@ -86,7 +86,13 @@ describe( "MeetingTicker", function () {
         $("form.ticker").submit();
         expect( $("div#form") ).toBeHidden();
       });
+
+      it( "captures the text of the selected currency option", function() {
+        $("form.ticker select").val( "yen" );
+        expect( ticker.currency() ).toEqual( "yen" );
+      });
     });
+
     describe( "start_time", function() {
       it( "defaults to the current time", function() {
         expect( $("#start_time").val() ).toEqual( "13:07" );
@@ -94,8 +100,13 @@ describe( "MeetingTicker", function () {
 
       it( "is updated from the #start_time input" );
     });
+
     describe( "#start", function() {
+      var update_triggered = false;
       beforeEach( function() {
+        $(".odometer").bind( "update", function( event, value ) {
+          update_triggered = true;
+        });
       });
 
       it( "updates the 'started at' text", function() {
@@ -111,9 +122,6 @@ describe( "MeetingTicker", function () {
       });
 
       it( "does not trigger an update if not correctly set up", function() {
-        var update_triggered = false;
-        $(".odometer").bind( "update", function( event, value ) { update_triggered = true; } );
-
         runs( function() {
           ticker.start();
           expect( update_triggered ).toBeFalsy();
@@ -125,9 +133,6 @@ describe( "MeetingTicker", function () {
       });
 
       it( "triggers an 'update' event on the odometer after a delay", function() {
-        var update_triggered = false;
-        $(".odometer").bind( "update", function( event, value ) { update_triggered = true; } );
-
         runs( function() {
           ticker.hourlyRate( "180" );
           ticker.attendeeCount( "24" );
@@ -143,7 +148,8 @@ describe( "MeetingTicker", function () {
 
       it( "triggers an 'update' event on the odometer with the current cost", function() {
         var update_value = 0;
-        spyOn( MeetingTicker.Time.now(), "secondsSince" ).andReturn( 3 * SECONDS_PER_HOUR );
+        spyOn( MeetingTicker.Time.now(), "secondsSince" ).
+          andReturn( 3 * SECONDS_PER_HOUR );
 
         $(".odometer").bind( "update", function( event, value ) { update_value = value; } );
 
@@ -157,6 +163,12 @@ describe( "MeetingTicker", function () {
         waits( UPDATE_INTERVAL );
 
         runs( function() { expect( update_value ).toEqual( ticker.cost() ) });
+      });
+
+      it( "sets the currency prefix for the odometer", function() {
+        ticker.start();
+        expect( ticker.currencyLabel() ).toEqual( "$" );
+        expect( $(".odometer span.prefix") ).toHaveText( "$" );
       });
     });
 
@@ -173,13 +185,15 @@ describe( "MeetingTicker", function () {
       });
 
       it( "per second is also calculated", function() {
-        expect( ticker.perSecondBurn() ).toEqual( expectedHourlyBurn / SECONDS_PER_HOUR );
+        expect( ticker.perSecondBurn() ).
+          toEqual( expectedHourlyBurn / SECONDS_PER_HOUR );
       });
     });
 
     describe( "#cost", function() {
       beforeEach( function() {
-        spyOn( MeetingTicker.Time.now(), "secondsSince" ).andReturn( 1 * SECONDS_PER_HOUR );
+        spyOn( MeetingTicker.Time.now(), "secondsSince" ).
+          andReturn( 1 * SECONDS_PER_HOUR );
 
         ticker.hourlyRate( "200" );
         ticker.attendeeCount( "12" );
@@ -221,16 +235,36 @@ describe( "MeetingTicker", function () {
     });
   });
 
-  describe( "on initialization", function() {
-    describe( "currency locale setup for en-gb", function() {
-      beforeEach( function() {
-        spyOn( MeetingTicker.Locale, "current" ).andReturn( new MeetingTicker.Locale( "en-gb" ) );
-        $('.ticker').meetingTicker();
-      });
+  describe( "currency locale setup for en-gb", function() {
+    beforeEach( function() {
+      spyOn( MeetingTicker.Locale, "current" ).
+        andReturn( new MeetingTicker.Locale( "gb" ) );
+      $('.ticker').meetingTicker();
+      ticker = $('.ticker').data("meeting-ticker").ticker;
+    });
 
-      it( "returns 'pound' for 'en-gb'", function() {
-        expect( $(".ticker select[name=units]").val() ).toEqual( "pound" );
-      });
+    it( "sets the currency select to 'pound'", function() {
+      expect( $(".ticker select[name=units]") ).toHaveValue( "pound" );
+    });
+
+    it( "sets the odometer prefix to the correct currency", function() {
+      ticker.start();
+      expect( ticker.currencyLabel() ).toEqual( "£" );
+      expect( $(".odometer span.prefix") ).toHaveText( "£" );
     });
   });
+
+  describe( "with currency locale setup for nl", function() {
+    beforeEach( function() {
+      spyOn( MeetingTicker.Locale, "current" ).
+        andReturn( new MeetingTicker.Locale( "nl" ) );
+      $('.ticker').meetingTicker();
+      ticker = $('.ticker').data("meeting-ticker").ticker;
+    });
+
+    it( "sets the select to 'euro'", function() {
+      expect( $(".ticker select[name=units]") ).toHaveValue( "euro" );
+    });
+  });
+
 });
