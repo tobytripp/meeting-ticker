@@ -13,6 +13,16 @@ class MeetingTicker
 
   stop: () ->
 
+  hourlyRate: (rate) ->
+    @_rate = parseFloat( rate ) if rate?
+    throw new Error( "Rate is not set." ) unless @_rate?
+    @_rate
+
+  attendeeCount: (count) ->
+    @_attendees = parseInt( count ) if count?
+    throw new Error( "Attendee Count is not set." ) unless @_attendees?
+    @_attendees
+
   amount: 0
 
 class Time

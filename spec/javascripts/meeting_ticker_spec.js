@@ -51,6 +51,11 @@ describe( "MeetingTicker", function () {
         expect( ticker.hourlyRate() ).toEqual( 200.00 );
       });
 
+      it( "accepts fractional values", function() {
+        ticker.hourlyRate( "200.05" );
+        expect( ticker.hourlyRate() ).toEqual( 200.05 );
+      });
+
       it( "throws an exception if the rate is not set", function() {
         expect( ticker.hourlyRate ).toThrow( "Rate is not set." );
       });
@@ -125,28 +130,28 @@ describe( "MeetingTicker", function () {
       });
 
       it( "does not trigger an update if not correctly set up", function() {
-        //runs( function() {
+        runs( function() {
           ticker.start();
           expect( update_triggered ).toBeFalsy();
-        //});
+        });
 
-        // waits( UPDATE_INTERVAL );
+         waits( UPDATE_INTERVAL );
 
-        //runs( function() { expect( update_triggered ).toBeFalsy() });
+        runs( function() { expect( update_triggered ).toBeFalsy() });
       });
 
       it( "triggers an 'update' event on the odometer after a delay", function() {
-        //runs( function() {
+        runs( function() {
           ticker.hourlyRate( "180" );
           ticker.attendeeCount( "24" );
 
           ticker.start();
           expect( update_triggered ).toBeFalsy();
-        //});
+        });
 
-        // waits( UPDATE_INTERVAL );
+         waits( UPDATE_INTERVAL );
 
-        //runs( function() { expect( update_triggered ).toBeTruthy() });
+        runs( function() { expect( update_triggered ).toBeTruthy() });
       });
 
       it( "triggers an 'update' event on the odometer with the current cost", function() {
@@ -156,16 +161,16 @@ describe( "MeetingTicker", function () {
 
         $(".odometer").bind( "update", function( event, value ) { update_value = value; } );
 
-        //runs( function() {
+        runs( function() {
           ticker.hourlyRate( "180" );
           ticker.attendeeCount( "24" );
 
           ticker.start();
-        //});
+        });
 
-        // waits( UPDATE_INTERVAL );
+         waits( UPDATE_INTERVAL );
 
-        //runs( function() { expect( update_value ).toEqual( ticker.cost() ) });
+        runs( function() { expect( update_value ).toEqual( ticker.cost() ) });
       });
 
       it( "sets the currency prefix for the odometer", function() {

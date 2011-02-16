@@ -12,6 +12,24 @@
       return this.form.hide();
     };
     MeetingTicker.prototype.stop = function() {};
+    MeetingTicker.prototype.hourlyRate = function(rate) {
+      if (rate != null) {
+        this._rate = parseFloat(rate);
+      }
+      if (this._rate == null) {
+        throw new Error("Rate is not set.");
+      }
+      return this._rate;
+    };
+    MeetingTicker.prototype.attendeeCount = function(count) {
+      if (count != null) {
+        this._attendees = parseInt(count);
+      }
+      if (this._attendees == null) {
+        throw new Error("Attendee Count is not set.");
+      }
+      return this._attendees;
+    };
     MeetingTicker.prototype.amount = 0;
     return MeetingTicker;
   })();
