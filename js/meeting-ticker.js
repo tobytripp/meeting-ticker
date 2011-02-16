@@ -56,6 +56,7 @@
     hourlyRate: function( rate ) {
       if( rate ) { this.rate = parseFloat( rate ); }
       if( !this.rate ) { throw new Error( "Rate is not set." ); }
+
       return this.rate;
     },
 
@@ -81,7 +82,12 @@
     },
 
     hourlyBurn: function() {
-      return this.hourlyRate() * this.attendeeCount();
+      try {
+        return this.hourlyRate() * this.attendeeCount();
+      } catch( error ) {
+        this.stop();
+        throw error;
+      }
     },
 
     perSecondBurn: function() {
@@ -104,6 +110,7 @@
 
     _bindEvents: function() {
       var self = this;
+
       this.form.submit( function(e) {
         e.preventDefault();
 

@@ -83,7 +83,11 @@ describe( "MeetingTicker", function () {
       });
 
       it( "on submit hides the form's container", function() {
+        $("#hourly_rate").val( "125" );
+        $("#attendees").val( "12" );
+
         $("form.ticker").submit();
+
         expect( $("div#form") ).toBeHidden();
       });
 
