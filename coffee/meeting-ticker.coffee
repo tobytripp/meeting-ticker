@@ -1,4 +1,3 @@
-root = exports ? this # Node.js or DOM?
 
 class MeetingTicker
   constructor: (form, settings) ->
@@ -8,6 +7,10 @@ class MeetingTicker
 
     @display.hide()
 
+  start: () ->
+    @display.show()
+    @form.hide()
+
   stop: () ->
 
   amount: 0
@@ -16,10 +19,23 @@ class Time
   @now: () ->
     new Time()
 
-MeetingTicker.Time = Time
-root.MeetingTicker = MeetingTicker
+  constructor: (time) ->
+    if time? and time.getMinutes?
+      @time = time
+    else if typeof time == "number"
+      @time = new Date( time )
+    else
+      @time = new Date()
 
-$.fn.meetingTicker = ( options ) ->
+  secondsSince: (past) ->
+    (@time - past.time) / 1000
+
+  toString: () ->
+    minutes = @time.getMinutes()
+    minutes = "0" + minutes if minutes < 10
+    @time.getHours() + ":" + minutes
+
+$.fn.meetingTicker = (options) ->
   settings =
     displaySelector: "#display"
 
@@ -33,3 +49,8 @@ $.fn.meetingTicker = ( options ) ->
         target: this,
         ticker: new MeetingTicker( this, settings )
       })
+
+root = exports ? this # Node.js or DOM?
+MeetingTicker.Time = Time
+root.MeetingTicker = MeetingTicker
+
