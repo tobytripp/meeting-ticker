@@ -13,6 +13,11 @@ $.widget( "ui.odometer", {
     }
 
     this.value( this.options.initialValue );
+
+    var self = this;
+    this.element.bind( "update", function( event, value ) {
+      self.value( value );
+    });
   },
 
   value: function( n ) {
