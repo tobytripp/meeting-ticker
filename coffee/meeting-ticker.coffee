@@ -1,17 +1,31 @@
+UPDATE_INTERVAL  = 125
+SECONDS_PER_HOUR = 60.0 * 60.0
 
 class MeetingTicker
   constructor: (form, settings) ->
     @options = settings
     @form    = $(form)
     @display = $( @options.displaySelector )
+    @odometerElement = $(".odometer")
 
     @display.hide()
 
+    this.startTime( Time.now() ) unless this.startTime()?
+
+    this._bindFormEvents()
+
   start: () ->
     @display.show()
-    @form.hide()
+    @form.parent().hide()
+    $("#started_at").text "(we began at #{this.startTime().toString()})"
+    @odometerElement.odometer()
+
+    @timer = setInterval(
+      (() => @odometerElement.trigger "update", 0),
+      UPDATE_INTERVAL )
 
   stop: () ->
+    clearInterval @timer
 
   hourlyRate: (rate) ->
     @_rate = parseFloat( rate ) if rate?
@@ -23,7 +37,41 @@ class MeetingTicker
     throw new Error( "Attendee Count is not set." ) unless @_attendees?
     @_attendees
 
-  amount: 0
+  startTime: (time) ->
+    if time?
+      @_startTime = new Time( time )
+      @form.find( "input[name=start_time]" ).val( @_startTime.toString() )
+
+    @_startTime
+
+  elapsedSeconds: () ->
+    Time.now().secondsSince this.startTime()
+
+  hourlyBurn: () ->
+    this.hourlyRate() * this.attendeeCount()
+
+  perSecondBurn: () ->
+    this.hourlyBurn() / SECONDS_PER_HOUR
+
+  currency: () ->
+    @form.find( "select[name=units]" ).val()
+
+  _bindFormEvents: () ->
+    @form.find( "input[name=start_time]" ).change (event) =>
+      event.preventDefault()
+      this.startTime( $(event.target).val() )
+
+    @form.find( "input[name=hourly_rate]" ).change (event) =>
+      event.preventDefault()
+      this.hourlyRate $(event.target).val()
+
+    @form.find( "input[name=attendees]" ).change (event) =>
+      event.preventDefault
+      this.attendeeCount $(event.target).val()
+
+    @form.submit (event) =>
+      event.preventDefault
+      this.start()
 
 class Time
   @now: () ->
@@ -34,6 +82,13 @@ class Time
       @time = time
     else if typeof time == "number"
       @time = new Date( time )
+    else if typeof time == "string"
+      [hours, minutes] = time.split ":"
+      @time = new Date()
+      @time.setHours parseInt( hours )
+      @time.setMinutes parseInt( minutes )
+    else if time instanceof Time
+      @time = time.time
     else
       @time = new Date()
 
