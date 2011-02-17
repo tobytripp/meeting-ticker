@@ -18,14 +18,21 @@ class MeetingTicker
     @display.show()
     @form.parent().hide()
     $("#started_at").text "(we began at #{this.startTime().toString()})"
-    @odometerElement.odometer()
+    @odometerElement.odometer({ prefix: this.currencyLabel() })
 
     @timer = setInterval(
-      (() => @odometerElement.trigger "update", 0),
+      (() => @odometerElement.trigger( "update", this.cost() )),
       UPDATE_INTERVAL )
 
   stop: () ->
     clearInterval @timer
+
+  cost: () ->
+    try
+      this.perSecondBurn() * this.elapsedSeconds()
+    catch e
+      this.stop()
+      throw e
 
   hourlyRate: (rate) ->
     @_rate = parseFloat( rate ) if rate?
@@ -45,7 +52,7 @@ class MeetingTicker
     @_startTime
 
   elapsedSeconds: () ->
-    Time.now().secondsSince this.startTime()
+      Time.now().secondsSince this.startTime()
 
   hourlyBurn: () ->
     this.hourlyRate() * this.attendeeCount()
@@ -55,6 +62,9 @@ class MeetingTicker
 
   currency: () ->
     @form.find( "select[name=units]" ).val()
+
+  currencyLabel: () ->
+    @form.find( "select[name=units] option:selected" ).text()
 
   _bindFormEvents: () ->
     @form.find( "input[name=start_time]" ).change (event) =>

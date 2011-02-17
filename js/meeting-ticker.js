@@ -19,13 +19,23 @@
       this.display.show();
       this.form.parent().hide();
       $("#started_at").text("(we began at " + (this.startTime().toString()) + ")");
-      this.odometerElement.odometer();
+      this.odometerElement.odometer({
+        prefix: this.currencyLabel()
+      });
       return this.timer = setInterval((__bind(function() {
-        return this.odometerElement.trigger("update", 0);
+        return this.odometerElement.trigger("update", this.cost());
       }, this)), UPDATE_INTERVAL);
     };
     MeetingTicker.prototype.stop = function() {
       return clearInterval(this.timer);
+    };
+    MeetingTicker.prototype.cost = function() {
+      try {
+        return this.perSecondBurn() * this.elapsedSeconds();
+      } catch (e) {
+        this.stop();
+        throw e;
+      }
     };
     MeetingTicker.prototype.hourlyRate = function(rate) {
       if (rate != null) {
@@ -63,6 +73,9 @@
     };
     MeetingTicker.prototype.currency = function() {
       return this.form.find("select[name=units]").val();
+    };
+    MeetingTicker.prototype.currencyLabel = function() {
+      return this.form.find("select[name=units] option:selected").text();
     };
     MeetingTicker.prototype._bindFormEvents = function() {
       this.form.find("input[name=start_time]").change(__bind(function(event) {

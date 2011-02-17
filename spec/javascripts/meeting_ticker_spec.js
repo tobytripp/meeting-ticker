@@ -1,6 +1,6 @@
 describe( "MeetingTicker", function () {
   var SECONDS_PER_HOUR = 60.0 * 60.0;
-  var UPDATE_INTERVAL  = 250;
+  var UPDATE_INTERVAL  = 125;
 
   var ticker;
   var now = new Date( Date.parse( "January 1, 1970 13:07" ) );
@@ -146,6 +146,42 @@ describe( "MeetingTicker", function () {
       it( "calculates the cost based on hourly burn and time elapsed", function() {
         expect( ticker.cost() ).toEqual( 200 * 12 * 1 );
       });
+
+    });
+
+    describe( "#cost before ticker is valid", function() {
+      var update_triggered = false;
+      beforeEach( function() {
+        $(".odometer").bind( "update", function( event, value ) {
+          update_triggered = true;
+        });
+      });
+
+      it( "stops the timer, no longer triggering updates", function() {
+        runs( function() {
+          ticker.hourlyRate( "200" );
+          ticker.attendeeCount( "12" );
+          ticker.start();
+        });
+
+        waits( UPDATE_INTERVAL );
+
+        runs( function() {
+          expect( update_triggered ).toBeTruthy();
+          update_triggered = false;
+          ticker._rate = null;
+        });
+
+        waits( UPDATE_INTERVAL );
+
+        runs( function() {
+          expect( update_triggered ).toBeFalsy();
+        });
+      });
+
+      it( "raises the error", function() {
+        expect( function() { ticker.cost(); } ).toThrow( new Error("Rate is not set.") );
+      });
     });
 
     describe( "#start", function() {
@@ -208,12 +244,9 @@ describe( "MeetingTicker", function () {
       });
 
       it( "does not trigger an update if not correctly set up", function() {
-        runs( function() {
-          ticker.start();
-          expect( update_triggered ).toBeFalsy();
-        });
+        runs( function() { ticker.start(); });
 
-         waits( UPDATE_INTERVAL );
+        waits( UPDATE_INTERVAL );
 
         runs( function() { expect( update_triggered ).toBeFalsy() });
       });
