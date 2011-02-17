@@ -54,10 +54,10 @@
     },
 
     hourlyRate: function( rate ) {
-      if( rate ) { this.rate = parseFloat( rate ); }
-      if( !this.rate ) { throw new Error( "Rate is not set." ); }
+      if( rate ) { this._rate = parseFloat( rate ); }
+      if( !this._rate ) { throw new Error( "Rate is not set." ); }
 
-      return this.rate;
+      return this._rate;
     },
 
     attendeeCount: function( count ) {
@@ -120,6 +120,11 @@
         }
 
         return false;
+      });
+
+      this.form.find( "input[name=start_time]" ).change( function(e) {
+        e.preventDefault();
+        self.startTime( $(e.target).val() );
       });
 
       this.form.find( "input[name=hourly_rate]" ).change( function( e ) {
@@ -211,6 +216,11 @@
       this.time = time.time;
     } else if( typeof time === "number" ) {
       this.time = new Date( time );
+    } else if( typeof time === "string" ) {
+      this.time = new Date();
+      components = time.split(":");
+      this.time.setHours(   parseInt( components[0] ) );
+      this.time.setMinutes( parseInt( components[1] ) );
     } else {
       this.time = new Date();
     }

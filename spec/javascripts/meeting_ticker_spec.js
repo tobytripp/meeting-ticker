@@ -1,6 +1,6 @@
 describe( "MeetingTicker", function () {
   var SECONDS_PER_HOUR = 60.0 * 60.0;
-  var UPDATE_INTERVAL  = 250;
+  var UPDATE_INTERVAL  = 125;
 
   var ticker;
   var now = new Date( Date.parse( "January 1, 1970 13:07" ) );
@@ -22,10 +22,6 @@ describe( "MeetingTicker", function () {
     });
 
     describe( "upon initialization", function() {
-      it( "has an amount property of 0", function() {
-        expect( ticker.amount ).toEqual( 0 );
-      });
-
       it( "hides the #display element", function() {
         expect( $("#display") ).toBeHidden();
       });
@@ -51,6 +47,11 @@ describe( "MeetingTicker", function () {
         expect( ticker.hourlyRate() ).toEqual( 200.00 );
       });
 
+      it( "accepts fractional values", function() {
+        ticker.hourlyRate( "200.05" );
+        expect( ticker.hourlyRate() ).toEqual( 200.05 );
+      });
+
       it( "throws an exception if the rate is not set", function() {
         expect( ticker.hourlyRate ).toThrow( "Rate is not set." );
       });
@@ -64,6 +65,18 @@ describe( "MeetingTicker", function () {
 
       it( "throws an Error if the count is not set", function() {
         expect( ticker.attendeeCount ).toThrow( "Attendee Count is not set." );
+      });
+    });
+
+    describe( "start_time", function() {
+      it( "defaults to the current time", function() {
+        expect( $("#start_time").val() ).toEqual( "13:07" );
+      });
+
+      it( "is updated from the #start_time input", function() {
+        $("#start_time").val( "19:42" );
+        $("#start_time").change();
+        expect( ticker.startTime().toString() ).toEqual( "19:42" );
       });
     });
 
@@ -94,85 +107,6 @@ describe( "MeetingTicker", function () {
       it( "captures the text of the selected currency option", function() {
         $("form.ticker select").val( "yen" );
         expect( ticker.currency() ).toEqual( "yen" );
-      });
-    });
-
-    describe( "start_time", function() {
-      it( "defaults to the current time", function() {
-        expect( $("#start_time").val() ).toEqual( "13:07" );
-      });
-
-      it( "is updated from the #start_time input" );
-    });
-
-    describe( "#start", function() {
-      var update_triggered = false;
-      beforeEach( function() {
-        $(".odometer").bind( "update", function( event, value ) {
-          update_triggered = true;
-        });
-      });
-
-      it( "updates the 'started at' text", function() {
-        ticker.start();
-        expect( $("#started_at") ).toHaveText( "(we began at 13:07)" );
-      });
-
-      it( "sets up the odometer", function() {
-        spyOn( ticker.odometerElement, 'odometer' )
-        ticker.start();
-
-        expect( ticker.odometerElement.odometer ).toHaveBeenCalled();
-      });
-
-      it( "does not trigger an update if not correctly set up", function() {
-        runs( function() {
-          ticker.start();
-          expect( update_triggered ).toBeFalsy();
-        });
-
-        waits( UPDATE_INTERVAL );
-
-        runs( function() { expect( update_triggered ).toBeFalsy() });
-      });
-
-      it( "triggers an 'update' event on the odometer after a delay", function() {
-        runs( function() {
-          ticker.hourlyRate( "180" );
-          ticker.attendeeCount( "24" );
-
-          ticker.start();
-          expect( update_triggered ).toBeFalsy();
-        });
-
-        waits( UPDATE_INTERVAL );
-
-        runs( function() { expect( update_triggered ).toBeTruthy() });
-      });
-
-      it( "triggers an 'update' event on the odometer with the current cost", function() {
-        var update_value = 0;
-        spyOn( MeetingTicker.Time.now(), "secondsSince" ).
-          andReturn( 3 * SECONDS_PER_HOUR );
-
-        $(".odometer").bind( "update", function( event, value ) { update_value = value; } );
-
-        runs( function() {
-          ticker.hourlyRate( "180" );
-          ticker.attendeeCount( "24" );
-
-          ticker.start();
-        });
-
-        waits( UPDATE_INTERVAL );
-
-        runs( function() { expect( update_value ).toEqual( ticker.cost() ) });
-      });
-
-      it( "sets the currency prefix for the odometer", function() {
-        ticker.start();
-        expect( ticker.currencyLabel() ).toEqual( "$" );
-        expect( $(".odometer span.prefix") ).toHaveText( "$" );
       });
     });
 
@@ -212,8 +146,113 @@ describe( "MeetingTicker", function () {
       it( "calculates the cost based on hourly burn and time elapsed", function() {
         expect( ticker.cost() ).toEqual( 200 * 12 * 1 );
       });
+
     });
 
+    describe( "#cost before ticker is valid", function() {
+      var update_triggered = false;
+      beforeEach( function() {
+        $(".odometer").bind( "update", function( event, value ) {
+          update_triggered = true;
+        });
+      });
+
+      it( "stops the timer, no longer triggering updates", function() {
+        runs( function() {
+          ticker.hourlyRate( "200" );
+          ticker.attendeeCount( "12" );
+          ticker.start();
+        });
+
+        waits( UPDATE_INTERVAL );
+
+        runs( function() {
+          expect( update_triggered ).toBeTruthy();
+          update_triggered = false;
+          ticker._rate = null;
+        });
+
+        waits( UPDATE_INTERVAL );
+
+        runs( function() {
+          expect( update_triggered ).toBeFalsy();
+        });
+      });
+
+      it( "raises the error", function() {
+        expect( function() { ticker.cost(); } ).toThrow( new Error("Rate is not set.") );
+      });
+    });
+
+    describe( "#start", function() {
+      var update_triggered = false;
+      beforeEach( function() {
+        update_triggered = false;
+        $(".odometer").bind( "update", function( event, value ) {
+          console.log( "update triggered on odometer with " + value );
+          update_triggered = true;
+        });
+      });
+
+      it( "updates the 'started at' text", function() {
+        ticker.start();
+        expect( $("#started_at") ).toHaveText( "(we began at 13:07)" );
+      });
+
+      it( "sets up the odometer", function() {
+        spyOn( ticker.odometerElement, 'odometer' )
+        ticker.start();
+
+        expect( ticker.odometerElement.odometer ).toHaveBeenCalled();
+      });
+
+      it( "triggers an 'update' event on the odometer after a delay", function() {
+        runs( function() {
+          ticker.hourlyRate( "180" );
+          ticker.attendeeCount( "24" );
+
+          ticker.start();
+          expect( update_triggered ).toBeFalsy();
+        });
+
+         waits( UPDATE_INTERVAL );
+
+        runs( function() { expect( update_triggered ).toBeTruthy() });
+      });
+
+      it( "triggers an 'update' event on the odometer with the current cost", function() {
+        var update_value = 0;
+        spyOn( MeetingTicker.Time.now(), "secondsSince" ).
+          andReturn( 3 * SECONDS_PER_HOUR );
+
+        $(".odometer").bind( "update", function( event, value ) { update_value = value; } );
+
+        runs( function() {
+          ticker.hourlyRate( "180" );
+          ticker.attendeeCount( "24" );
+
+          ticker.start();
+        });
+
+        waits( UPDATE_INTERVAL );
+
+        runs( function() { expect( update_value ).toEqual( ticker.cost() ) });
+      });
+
+      it( "sets the currency prefix for the odometer", function() {
+        ticker.start();
+        expect( ticker.currencyLabel() ).toEqual( "$" );
+        expect( $(".odometer span.prefix") ).toHaveText( "$" );
+      });
+
+      it( "does not trigger an update if not correctly set up", function() {
+        runs( function() { ticker.start(); });
+
+        waits( UPDATE_INTERVAL );
+
+        runs( function() { expect( update_triggered ).toBeFalsy() });
+      });
+    });
   });
 
   describe( ".Time", function() {
@@ -229,6 +268,17 @@ describe( "MeetingTicker", function () {
       var time = new MeetingTicker.Time( new Date( ms ) );
 
       expect( time.toString() ).toEqual( "14:02" );
+    });
+
+    it( "can accept another Time object in its constructor", function() {
+      var time = new MeetingTicker.Time( now );
+      expect( new MeetingTicker.Time( time ).toString() ).
+        toEqual( time.toString() );
+    });
+
+    it( "can accept an HH:MM formatted string in its constructor", function() {
+      var time = new MeetingTicker.Time( "19:42" );
+      expect( time.toString() ).toEqual( "19:42" );
     });
 
     it( "can calculate the number of seconds passed since a given Time", function() {
@@ -270,5 +320,4 @@ describe( "MeetingTicker", function () {
       expect( $(".ticker select[name=units]") ).toHaveValue( "euro" );
     });
   });
-
 });
