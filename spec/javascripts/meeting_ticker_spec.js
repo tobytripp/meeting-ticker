@@ -29,6 +29,8 @@ describe( "MeetingTicker", function () {
 
     describe( "on #start", function() {
       beforeEach( function() {
+        ticker.hourlyRate( "200" );
+        ticker.attendeeCount("12");
         ticker.start();
       });
 
@@ -72,12 +74,6 @@ describe( "MeetingTicker", function () {
       it( "defaults to the current time", function() {
         expect( $("#start_time").val() ).toEqual( "13:07" );
       });
-
-      it( "is updated from the #start_time input", function() {
-        $("#start_time").val( "19:42" );
-        $("#start_time").change();
-        expect( ticker.startTime().toString() ).toEqual( "19:42" );
-      });
     });
 
     describe( "form events", function() {
@@ -107,6 +103,21 @@ describe( "MeetingTicker", function () {
       it( "captures the text of the selected currency option", function() {
         $("form.ticker select").val( "yen" );
         expect( ticker.currency() ).toEqual( "yen" );
+      });
+
+      it( "stops the timer when the stop form is submitted", function() {
+        ticker.hourlyRate( "4" );
+        ticker.attendeeCount( "7" );
+        ticker.start();
+
+        $("form.stop").submit();
+
+        expect( ticker.isRunning() ).toBeFalsy();
+      });
+
+      it( "captures changes to the start time input", function() {
+        $("form.ticker input[name=start_time]").val( "03:30" ).change();
+        expect( ticker.startTime().toString() ).toEqual( "3:30" );
       });
     });
 
@@ -184,9 +195,11 @@ describe( "MeetingTicker", function () {
       });
     });
 
-    describe( "#start", function() {
+    describe( "#start when inputs are valid", function() {
       var update_triggered = false;
       beforeEach( function() {
+        ticker.hourlyRate( "180" );
+        ticker.attendeeCount( "5" );
         update_triggered = false;
         $(".odometer").bind( "update", function( event, value ) {
           update_triggered = true;
@@ -243,13 +256,33 @@ describe( "MeetingTicker", function () {
         expect( ticker.currencyLabel() ).toEqual( "$" );
         expect( $(".odometer span.prefix") ).toHaveText( "$" );
       });
+    });
+
+    describe("#start when inputs are not valid", function() {
+      var update_triggered = false;
+      beforeEach( function() {
+        update_triggered = false;
+        $(".odometer").bind( "update", function( event, value ) {
+          update_triggered = true;
+        });
+      });
 
       it( "does not trigger an update if not correctly set up", function() {
-        runs( function() { ticker.start(); });
+        runs( function() {
+          ticker._rate = null;
+          ticker.start();
+        });
 
         waits( UPDATE_INTERVAL );
 
         runs( function() { expect( update_triggered ).toBeFalsy() });
+      });
+
+      it( "does not hide the form if not valid", function() {
+        ticker._rate = null;
+        $("input[hourly_rate]").val( "" );
+        ticker.start();
+        expect( $("#form") ).toBeVisible();
       });
     });
   });
@@ -295,6 +328,8 @@ describe( "MeetingTicker", function () {
       spyOn( MeetingTicker.Locale, "current" ).andReturn( locale );
       $('.ticker').meetingTicker();
       ticker = $('.ticker').data("meeting-ticker").ticker;
+      $("input[name=attendees]").val( "12" );
+      $("input[name=hourly_rate]").val("12.50");
     });
 
     it( "sets its language to 'gb'", function() {

@@ -12,10 +12,12 @@ class MeetingTicker
 
     this.startTime( Time.now() ) unless this.startTime()?
 
+    this._initForm()
     this._bindFormEvents()
     this._detectCurrency()
 
   start: () ->
+    return unless this.valid()
     @display.show()
     @form.parent().hide()
     $("#started_at").text "(we began at #{this.startTime().toString()})"
@@ -27,6 +29,10 @@ class MeetingTicker
 
   stop: () ->
     clearInterval @timer
+    @timer = null
+
+  isRunning: () ->
+    @timer?
 
   cost: () ->
     try
@@ -36,12 +42,16 @@ class MeetingTicker
       throw e
 
   hourlyRate: (rate) ->
-    @_rate = parseFloat( rate ) if rate?
+    if rate?
+      @_rate = parseFloat( rate )
+      @form.find( "input[name=hourly_rate]" ).val( @_rate )
     throw new Error( "Rate is not set." ) unless @_rate?
     @_rate
 
   attendeeCount: (count) ->
-    @_attendees = parseInt( count ) if count?
+    if count?
+      @_attendees = parseInt( count )
+      @form.find( "input[name=attendees]" ).val( @_attendees )
     throw new Error( "Attendee Count is not set." ) unless @_attendees?
     @_attendees
 
@@ -70,6 +80,31 @@ class MeetingTicker
   currencyLabel: () ->
     @form.find( "select[name=units] option:selected" ).text()
 
+  valid: () ->
+    @form.valid()
+
+  _initForm: () ->
+    this.startTime( Time.now() ) unless this.startTime()?
+    $("input.watermark").each () ->
+      $(this).watermark( $(this).attr( "title" ) )
+    $("#start_time").clockpick({
+      military: true, layout: "horizontal"
+    })
+    @form.validate
+      rules:
+        attendees:
+          required: true
+          min:      1
+          number:   true
+        hourly_rate:
+          required: true
+          number:   true
+          min:      0.01
+        start_time: "required"
+      messages:
+        attendees:   "Must be a number greater than zero"
+        hourly_rate: "Must be a number greater than zero"
+
   _bindFormEvents: () ->
     @form.find( "input[name=start_time]" ).change (event) =>
       event.preventDefault()
@@ -86,6 +121,10 @@ class MeetingTicker
     @form.submit (event) =>
       event.preventDefault
       this.start()
+
+    $("form.stop").submit (event) =>
+      event.preventDefault
+      this.stop()
 
   _detectCurrency: () ->
     this.currency( Locale.current().currency() )
