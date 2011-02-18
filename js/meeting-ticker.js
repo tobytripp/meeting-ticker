@@ -1,5 +1,5 @@
 (function() {
-  var MeetingTicker, SECONDS_PER_HOUR, Time, UPDATE_INTERVAL, root;
+  var Locale, MeetingTicker, SECONDS_PER_HOUR, Time, UPDATE_INTERVAL, root;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   UPDATE_INTERVAL = 125;
   SECONDS_PER_HOUR = 60.0 * 60.0;
@@ -14,6 +14,7 @@
         this.startTime(Time.now());
       }
       this._bindFormEvents();
+      this._detectCurrency();
     }
     MeetingTicker.prototype.start = function() {
       this.display.show();
@@ -71,8 +72,13 @@
     MeetingTicker.prototype.perSecondBurn = function() {
       return this.hourlyBurn() / SECONDS_PER_HOUR;
     };
-    MeetingTicker.prototype.currency = function() {
-      return this.form.find("select[name=units]").val();
+    MeetingTicker.prototype.currency = function(newCurrency) {
+      var view;
+      view = this.form.find("select[name=units]");
+      if ((newCurrency != null) && view.val() !== newCurrency) {
+        view.val(newCurrency);
+      }
+      return view.val();
     };
     MeetingTicker.prototype.currencyLabel = function() {
       return this.form.find("select[name=units] option:selected").text();
@@ -94,6 +100,9 @@
         event.preventDefault;
         return this.start();
       }, this));
+    };
+    MeetingTicker.prototype._detectCurrency = function() {
+      return this.currency(Locale.current().currency());
     };
     return MeetingTicker;
   })();
@@ -131,6 +140,57 @@
     };
     return Time;
   })();
+  Locale = (function() {
+    Locale.current = function() {
+      return new Locale();
+    };
+    function Locale(language) {
+      var lang, _ref;
+      if (language != null) {
+        this.language = language;
+        return;
+      }
+      if (typeof navigator != "undefined" && navigator !== null) {
+        lang = (_ref = navigator.language) != null ? _ref : navigator.userLanguage;
+      } else {
+        lang = "en-us";
+      }
+      lang = lang.toLowerCase().split("-");
+      if (lang[0] === "en") {
+        this.language = lang[1];
+      } else {
+        this.language = lang[0];
+      }
+    }
+    Locale.prototype.currency = function() {
+      switch (this.language) {
+        case "us":
+          return "$";
+        case "gb":
+          return "pound";
+        case 'ca':
+        case 'de':
+        case 'el':
+        case 'es':
+        case 'et':
+        case 'fi':
+        case 'fr':
+        case 'ga':
+        case 'it':
+        case 'lb':
+        case 'mt':
+        case 'nl':
+        case 'pt':
+        case 'sk':
+        case 'sl':
+        case 'sv':
+          return "euro";
+        case 'ja':
+          return "yen";
+      }
+    };
+    return Locale;
+  })();
   $.fn.meetingTicker = function(options) {
     var settings;
     settings = {
@@ -152,6 +212,7 @@
     });
   };
   root = typeof exports != "undefined" && exports !== null ? exports : this;
-  MeetingTicker.Time = Time;
   root.MeetingTicker = MeetingTicker;
+  root.MeetingTicker.Time = Time;
+  root.MeetingTicker.Locale = Locale;
 }).call(this);

@@ -187,6 +187,7 @@ describe( "MeetingTicker", function () {
     describe( "#start", function() {
       var update_triggered = false;
       beforeEach( function() {
+        update_triggered = false;
         $(".odometer").bind( "update", function( event, value ) {
           update_triggered = true;
         });
@@ -288,11 +289,20 @@ describe( "MeetingTicker", function () {
   });
 
   describe( "currency locale setup for en-gb", function() {
+    var locale;
     beforeEach( function() {
-      spyOn( MeetingTicker.Locale, "current" ).
-        andReturn( new MeetingTicker.Locale( "gb" ) );
+      locale = new MeetingTicker.Locale( "gb" );
+      spyOn( MeetingTicker.Locale, "current" ).andReturn( locale );
       $('.ticker').meetingTicker();
       ticker = $('.ticker').data("meeting-ticker").ticker;
+    });
+
+    it( "sets its language to 'gb'", function() {
+      expect( locale.language ).toEqual( 'gb' );
+    });
+
+    it( "has a currency value of 'pound'", function() {
+      expect( locale.currency() ).toEqual( "pound" );
     });
 
     it( "sets the currency select to 'pound'", function() {
@@ -312,6 +322,11 @@ describe( "MeetingTicker", function () {
         andReturn( new MeetingTicker.Locale( "nl" ) );
       $('.ticker').meetingTicker();
       ticker = $('.ticker').data("meeting-ticker").ticker;
+    });
+
+    it( "has a currency value of 'euro'", function() {
+      var locale = new MeetingTicker.Locale( "nl" );
+      expect( locale.currency() ).toEqual( "euro" );
     });
 
     it( "sets the select to 'euro'", function() {

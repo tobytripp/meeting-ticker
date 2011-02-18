@@ -13,6 +13,7 @@ class MeetingTicker
     this.startTime( Time.now() ) unless this.startTime()?
 
     this._bindFormEvents()
+    this._detectCurrency()
 
   start: () ->
     @display.show()
@@ -60,8 +61,11 @@ class MeetingTicker
   perSecondBurn: () ->
     this.hourlyBurn() / SECONDS_PER_HOUR
 
-  currency: () ->
-    @form.find( "select[name=units]" ).val()
+  currency: (newCurrency) ->
+    view = @form.find( "select[name=units]" )
+    if newCurrency? and view.val() != newCurrency
+      view.val( newCurrency )
+    view.val()
 
   currencyLabel: () ->
     @form.find( "select[name=units] option:selected" ).text()
@@ -82,6 +86,9 @@ class MeetingTicker
     @form.submit (event) =>
       event.preventDefault
       this.start()
+
+  _detectCurrency: () ->
+    this.currency( Locale.current().currency() )
 
 class Time
   @now: () ->
@@ -110,6 +117,37 @@ class Time
     minutes = "0" + minutes if minutes < 10
     @time.getHours() + ":" + minutes
 
+class Locale
+  @current: () ->
+    new Locale()
+
+  constructor: (language) ->
+    if language?
+      @language = language
+      return
+
+    if navigator?
+      lang = navigator.language ? navigator.userLanguage
+    else
+      lang = "en-us"
+
+    lang = lang.toLowerCase().split("-")
+    if lang[0] == "en"
+      @language = lang[1]
+    else
+      @language = lang[0]
+
+  currency: () ->
+    switch @language
+      when "us" then "$"
+      when "gb" then "pound"
+      when 'ca', 'de', 'el', 'es', 'et', 'fi', \
+           'fr', 'ga', 'it', 'lb', 'mt', 'nl', \
+           'pt', 'sk', 'sl', 'sv'
+        "euro"
+      when 'ja' then "yen"
+
+
 $.fn.meetingTicker = (options) ->
   settings =
     displaySelector: "#display"
@@ -126,6 +164,6 @@ $.fn.meetingTicker = (options) ->
       })
 
 root = exports ? this # Node.js or DOM?
-MeetingTicker.Time = Time
-root.MeetingTicker = MeetingTicker
-
+root.MeetingTicker        = MeetingTicker
+root.MeetingTicker.Time   = Time
+root.MeetingTicker.Locale = Locale
