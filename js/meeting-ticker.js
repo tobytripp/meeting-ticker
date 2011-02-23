@@ -1,316 +1,273 @@
-;var MeetingTicker;
-
-(function($) {
-  var SECONDS_PER_HOUR = 60.0 * 60.0;
-  var UPDATE_INTERVAL  = 125; // ms
-
-  MeetingTicker = function( form, settings ) {
-    this.form     = $(form);
-    this.settings = settings;
-
-    this.odometerElement = $(".odometer");
-
-    this.init();
-  }
-
-  MeetingTicker.prototype = {
-    init: function() {
-      self = this;
-      this.display().hide();
-      this.amount = 0;
-
-      this._bindEvents();
+(function() {
+  var Locale, MeetingTicker, SECONDS_PER_HOUR, Time, UPDATE_INTERVAL, root;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  UPDATE_INTERVAL = 125;
+  SECONDS_PER_HOUR = 60.0 * 60.0;
+  MeetingTicker = (function() {
+    function MeetingTicker(form, settings) {
+      this.options = settings;
+      this.form = $(form);
+      this.display = $(this.options.displaySelector);
+      this.odometerElement = $(".odometer");
+      this.display.hide();
+      if (this.startTime() == null) {
+        this.startTime(Time.now());
+      }
       this._initForm();
+      this._bindFormEvents();
       this._detectCurrency();
-    },
-
-    display: function() {
-      if( !this.settings.display ) {
-        this.settings.display = $( this.settings.displaySelector );
+    }
+    MeetingTicker.prototype.start = function() {
+      if (!this.valid()) {
+        return;
       }
-      return this.settings.display;
-    },
-
-    start: function() {
-      var self = this;
+      this.display.show();
       this.form.parent().hide();
-
-      $("#started_at").text( "(we began at " + this.startTime().toString() + ")" );
-
-      this.display().fadeIn( 1500 );
-      this.odometerElement.odometer({ prefix: self.currencyLabel() });
-
-      this.timer = setInterval( function() {
-        self.odometerElement.trigger( "update", self.cost() );
-      }, UPDATE_INTERVAL );
-    },
-
-    stop: function() {
-      clearInterval( this.timer );
-    },
-
-    cost: function() {
-      return this.perSecondBurn() * this.elapsedSeconds();
-    },
-
-    hourlyRate: function( rate ) {
-      if( rate ) { this._rate = parseFloat( rate ); }
-      if( !this._rate ) { throw new Error( "Rate is not set." ); }
-
-      return this._rate;
-    },
-
-    attendeeCount: function( count ) {
-      if( count ) { this.count = parseInt( count ); }
-      if( !this.count ) { throw new Error( "Attendee Count is not set." ); }
-      return this.count;
-    },
-
-    currency: function( newCurrency ) {
-      var view = this.form.find( "select[name=units]" );
-      if( newCurrency ) {
-        if( view.val() != newCurrency ) {
-          view.val( newCurrency );
-        }
-      }
-
-      return view.val();
-    },
-
-    currencyLabel: function() {
-      return this.form.find( "select[name=units] option:selected" ).text();
-    },
-
-    hourlyBurn: function() {
+      $("#started_at").text("(we began at " + (this.startTime().toString()) + ")");
+      this.odometerElement.odometer({
+        prefix: this.currencyLabel()
+      });
+      return this.timer = setInterval((__bind(function() {
+        return this.odometerElement.trigger("update", this.cost());
+      }, this)), UPDATE_INTERVAL);
+    };
+    MeetingTicker.prototype.stop = function() {
+      clearInterval(this.timer);
+      return this.timer = null;
+    };
+    MeetingTicker.prototype.isRunning = function() {
+      return this.timer != null;
+    };
+    MeetingTicker.prototype.cost = function() {
       try {
-        return this.hourlyRate() * this.attendeeCount();
-      } catch( error ) {
+        return this.perSecondBurn() * this.elapsedSeconds();
+      } catch (e) {
         this.stop();
-        throw error;
+        throw e;
       }
-    },
-
-    perSecondBurn: function() {
+    };
+    MeetingTicker.prototype.hourlyRate = function(rate) {
+      if (rate != null) {
+        this._rate = parseFloat(rate);
+        this.form.find("input[name=hourly_rate]").val(this._rate);
+      }
+      if (this._rate == null) {
+        throw new Error("Rate is not set.");
+      }
+      return this._rate;
+    };
+    MeetingTicker.prototype.attendeeCount = function(count) {
+      if (count != null) {
+        this._attendees = parseInt(count);
+        this.form.find("input[name=attendees]").val(this._attendees);
+      }
+      if (this._attendees == null) {
+        throw new Error("Attendee Count is not set.");
+      }
+      return this._attendees;
+    };
+    MeetingTicker.prototype.startTime = function(time) {
+      var input, value;
+      input = this.form.find("input[name=start_time]");
+      if (time != null) {
+        this._startTime = new Time(time);
+        input.val(this._startTime.toString());
+      }
+      value = input.val();
+      if (value.length > 0) {
+        this._startTime = new Time(value);
+      }
+      return this._startTime;
+    };
+    MeetingTicker.prototype.elapsedSeconds = function() {
+      return Time.now().secondsSince(this.startTime());
+    };
+    MeetingTicker.prototype.hourlyBurn = function() {
+      return this.hourlyRate() * this.attendeeCount();
+    };
+    MeetingTicker.prototype.perSecondBurn = function() {
       return this.hourlyBurn() / SECONDS_PER_HOUR;
-    },
-
-    elapsedSeconds: function() {
-      return MeetingTicker.Time.now().secondsSince( this.startTime() );
-    },
-
-    startTime: function( time ) {
-      if( time ) {
-        var start = this.form.find( "input[name=start_time]" );
-        this.startedAt = new MeetingTicker.Time( time );
-        start.val( this.startedAt.toString() );
+    };
+    MeetingTicker.prototype.currency = function(newCurrency) {
+      var view;
+      view = this.form.find("select[name=units]");
+      if ((newCurrency != null) && view.val() !== newCurrency) {
+        view.val(newCurrency);
       }
-
-      return this.startedAt;
-    },
-
-    _bindEvents: function() {
-      var self = this;
-
-      this.form.submit( function(e) {
-        e.preventDefault();
-
-        if( $(this).valid() ) {
-          $(".error").hide();
-          self.start();
-        }
-
-        return false;
-      });
-
-      this.form.find( "input[name=start_time]" ).change( function(e) {
-        e.preventDefault();
-        self.startTime( $(e.target).val() );
-      });
-
-      this.form.find( "input[name=hourly_rate]" ).change( function( e ) {
-        e.preventDefault();
-        self.hourlyRate( $(e.target).val() )
-      });
-
-      this.form.find( "input[name=attendees]" ).change( function( e ) {
-        e.preventDefault();
-        self.attendeeCount( $(e.target).val() );
-      });
-
-      this.display().find( "form.stop" ).submit( function( event ) {
-        event.preventDefault();
-        self.stop();
-        return false;
-      });
-    },
-
-    _initForm: function() {
-      if( ! this.startTime() ) {
-        this.startTime( MeetingTicker.Time.now() );
+      return view.val();
+    };
+    MeetingTicker.prototype.currencyLabel = function() {
+      return this.form.find("select[name=units] option:selected").text();
+    };
+    MeetingTicker.prototype.valid = function() {
+      return this.form.valid();
+    };
+    MeetingTicker.prototype._initForm = function() {
+      if (this.startTime() == null) {
+        this.startTime(Time.now());
       }
-
-      $("input.watermark").each( function() {
-        $(this).watermark( $(this).attr( "title" ) );
+      $("input.watermark").each(function() {
+        return $(this).watermark($(this).attr("title"));
       });
-
       $("#start_time").clockpick({
         military: true,
-        layout  : "horizontal"
+        layout: "horizontal"
       });
-
-      this.form.validate({
+      return this.form.validate({
         rules: {
           attendees: {
             required: true,
-            min:      1,
-            number:   true
+            min: 1,
+            number: true
           },
-
           hourly_rate: {
             required: true,
-            number:   true,
-            min:      0.01
+            number: true,
+            min: 0.01
           },
-
           start_time: "required"
         },
-
         messages: {
-          attendees:   "Must be a number greater than zero.",
-          hourly_rate: "Must be a number greater than zero."
+          attendees: "Must be a number greater than zero",
+          hourly_rate: "Must be a number greater than zero"
         }
       });
-    },
-
-    _detectCurrency: function() {
-      var locale = MeetingTicker.Locale.current();
-      this.currency( locale.currency() );
-    },
-  };
-
-  $.fn.meetingTicker = function( options ) {
-    var settings = {
+    };
+    MeetingTicker.prototype._bindFormEvents = function() {
+      this.form.find("input[name=start_time]").change(__bind(function(event) {
+        event.preventDefault();
+        return this.startTime($(event.target).val());
+      }, this));
+      this.form.find("input[name=hourly_rate]").change(__bind(function(event) {
+        event.preventDefault();
+        return this.hourlyRate($(event.target).val());
+      }, this));
+      this.form.find("input[name=attendees]").change(__bind(function(event) {
+        event.preventDefault;
+        return this.attendeeCount($(event.target).val());
+      }, this));
+      this.form.submit(__bind(function(event) {
+        event.preventDefault;
+        return this.start();
+      }, this));
+      return $("form.stop").submit(__bind(function(event) {
+        event.preventDefault;
+        return this.stop();
+      }, this));
+    };
+    MeetingTicker.prototype._detectCurrency = function() {
+      return this.currency(Locale.current().currency());
+    };
+    return MeetingTicker;
+  })();
+  Time = (function() {
+    Time.now = function() {
+      return new Time();
+    };
+    function Time(time) {
+      var hours, minutes, _ref;
+      console.log(time);
+      if ((time != null) && (time.getMinutes != null)) {
+        this.time = time;
+      } else if (typeof time === "number") {
+        this.time = new Date(time);
+      } else if (typeof time === "string" && time.length > 0) {
+        _ref = time.split(":"), hours = _ref[0], minutes = _ref[1];
+        this.time = new Date();
+        this.time.setHours(parseInt(hours));
+        this.time.setMinutes(parseInt(minutes));
+      } else if (time instanceof Time) {
+        this.time = time.time;
+      } else {
+        this.time = new Date();
+      }
+    }
+    Time.prototype.secondsSince = function(past) {
+      return (this.time - past.time) / 1000;
+    };
+    Time.prototype.toString = function() {
+      var minutes;
+      minutes = this.time.getMinutes();
+      if (minutes < 10) {
+        minutes = "0" + minutes;
+      }
+      return this.time.getHours() + ":" + minutes;
+    };
+    return Time;
+  })();
+  Locale = (function() {
+    Locale.current = function() {
+      return new Locale();
+    };
+    function Locale(language) {
+      var lang, _ref;
+      if (language != null) {
+        this.language = language;
+        return;
+      }
+      if (typeof navigator != "undefined" && navigator !== null) {
+        lang = (_ref = navigator.language) != null ? _ref : navigator.userLanguage;
+      } else {
+        lang = "en-us";
+      }
+      lang = lang.toLowerCase().split("-");
+      if (lang[0] === "en") {
+        this.language = lang[1];
+      } else {
+        this.language = lang[0];
+      }
+    }
+    Locale.prototype.currency = function() {
+      switch (this.language) {
+        case "us":
+          return "$";
+        case "gb":
+          return "pound";
+        case 'ca':
+        case 'de':
+        case 'el':
+        case 'es':
+        case 'et':
+        case 'fi':
+        case 'fr':
+        case 'ga':
+        case 'it':
+        case 'lb':
+        case 'mt':
+        case 'nl':
+        case 'pt':
+        case 'sk':
+        case 'sl':
+        case 'sv':
+          return "euro";
+        case 'ja':
+          return "yen";
+      }
+    };
+    return Locale;
+  })();
+  $.fn.meetingTicker = function(options) {
+    var settings;
+    settings = {
       displaySelector: "#display"
     };
-
-    return this.each( function() {
-      var $this = $(this);
-      if( options) { $.extend( settings, options ); }
-
-      var data = $this.data('meeting-ticker');
-      if( !data ) {
-        $this.data( "meeting-ticker", {
+    return this.each(function() {
+      var $this, data;
+      $this = $(this);
+      if (options) {
+        $.extend(settings, options);
+      }
+      data = $this.data('meeting-ticker');
+      if (!data) {
+        return $this.data("meeting-ticker", {
           target: this,
-          ticker: new MeetingTicker( this, settings )
+          ticker: new MeetingTicker(this, settings)
         });
       }
     });
-  }
-})(jQuery);
-
-(function($) {
-  MeetingTicker.Time = function( time ) {
-    if( time && time.getHours ) {
-      this.time = time;
-    } else if( time instanceof MeetingTicker.Time ) { // FIXME: smelly
-      this.time = time.time;
-    } else if( typeof time === "number" ) {
-      this.time = new Date( time );
-    } else if( typeof time === "string" ) {
-      this.time = new Date();
-      components = time.split(":");
-      this.time.setHours(   parseInt( components[0] ) );
-      this.time.setMinutes( parseInt( components[1] ) );
-    } else {
-      this.time = new Date();
-    }
-  }
-
-  MeetingTicker.Time.now = function() {
-    return new MeetingTicker.Time();
-  }
-
-  MeetingTicker.Time.prototype.toString = function() {
-    var minutes = this.time.getMinutes();
-    if( minutes < 10 ) minutes = "0" + minutes;
-    return this.time.getHours() + ":" + minutes;
-  }
-
-  MeetingTicker.Time.prototype.secondsSince = function( then ) {
-    return (this.time - then.time) / 1000;
-  }
-})(jQuery);
-
-(function($) {
-  MeetingTicker.Locale = function( language ) {
-    if( language ) { this.language = language; return; }
-
-    var lang;
-    if( typeof navigator != null ) {
-      lang = navigator.language ? navigator.language : navigator.userLanguage;
-    } else {
-      lang = "en-us"; // Fall-back
-    }
-
-    lang = lang.toLowerCase().split("-");
-    if( lang[0] === "en" ) {
-      this.language = lang[1];
-    } else {
-      this.language = lang[0];
-    }
-  }
-
-  MeetingTicker.Locale.prototype = {
-    euro:   "euro",
-    dollar: "$",
-    yen:    "yen",
-    pound:  "pound",
-
-    currency: function() {
-      return {
-        'us': this.dollar,
-        'gb': this.pound,
-        'ca': this.euro,
-        'de': this.euro,
-        'el': this.euro,
-        'es': this.euro,
-        'et': this.euro,
-        'fi': this.euro,
-        'fr': this.euro,
-        'ga': this.euro,
-        'it': this.euro,
-        'lb': this.euro,
-        'mt': this.euro,
-        'nl': this.euro,
-        'pt': this.euro,
-        'sk': this.euro,
-        'sl': this.euro,
-        'sv': this.euro,
-        'ja': this.yen
-      }[this.language];
-    }
-  }
-
-  MeetingTicker.Locale.current = function() { return new MeetingTicker.Locale(); }
-})(jQuery);
-
-$(function() { $('.ticker').meetingTicker() });
-
-function valid( data ) {
-  var valid   = false;
-
-  for( key in data ) {
-    var error = $("dd:has(:input[name=" + key + "])").find( ".error" );
-
-    if( isNaN( data[key] ) ) {
-      error.text( "Must be a number" ).show();
-      valid = false;
-    } else if( data[key] <= 0 ) {
-      error.text( "Must be a positive, non-zero, number" ).show();
-    } else {
-      valid = true;
-    }
-  }
-
-  return valid;
-};
+  };
+  root = typeof exports != "undefined" && exports !== null ? exports : this;
+  root.MeetingTicker = MeetingTicker;
+  root.MeetingTicker.Time = Time;
+  root.MeetingTicker.Locale = Locale;
+}).call(this);
