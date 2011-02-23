@@ -74,7 +74,10 @@ describe( "MeetingTicker", function () {
       });
 
       it( "pulls its value from the form (clockpick does not fire #change)", function() {
+        ticker.hourlyRate( "200" );
+        ticker.attendeeCount("12");
         $("#start_time").val( "03:30" );
+        ticker.start();
         expect( ticker.startTime().toString() ).toEqual( "3:30" );
       });
     });

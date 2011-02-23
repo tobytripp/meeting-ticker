@@ -26,36 +26,36 @@
     <dl>
       <dt><label for="attendees">Number of Attendees:</label></dt>
       <dd>
-    	<input id="attendees"
-    	       class="watermark"
-    	       tabindex="1"
-    	       type="text" name="attendees"
-    	       value="" title="count" />
+        <input id="attendees"
+               class="watermark"
+               tabindex="1"
+               type="text" name="attendees"
+               value="" title="count" />
       </dd>
 
       <dt>
-  	<label for="hourly_rate">Average Hourly Rate:</label>
-  	<p class="small">
-  	  Be sure to include overhead costs like facilities and benefits.
-  	</p>
+        <label for="hourly_rate">Average Hourly Rate:</label>
+        <p class="small">
+          Be sure to include overhead costs like facilities and benefits.
+        </p>
       </dt>
       <dd>
-  	<select name="units" tabindex="3">
-  	  <option selected="selected">$</option>
-  	  <option>&pound;</option>
-  	  <option>&euro;</option>
-  	  <option>&yen;</option>
-  	</select>
-    	<input id="hourly_rate"
-    	       class="watermark" type="text"
-    	       tabindex="2"
-    	       name="hourly_rate" value="" title="guess (200?)" />
+        <select name="units" tabindex="3">
+          <option value="$" selected="selected">$</option>
+          <option value="pound">&pound;</option>
+          <option value="euro">&euro;</option>
+          <option value="yen">&yen;</option>
+        </select>
+        <input id="hourly_rate"
+               class="watermark" type="text"
+               tabindex="2"
+               name="hourly_rate" value="" title="guess (200?)" />
       </dd>
 
       <dt><label for="start_time">The Meeting started at:</label></dt>
       <dd>
-	<input id="start_time" type="text"
-	       name="start_time" value="" tabindex="4"/>
+        <input id="start_time" type="text"
+               name="start_time" value="" tabindex="4"/>
       </dd>
     </dl>
 
@@ -68,17 +68,30 @@
   <p class="small">If this works in Internet Explorer, it is purely by accident.</p>
 </div>
 
-  <div id="display">
-  	<h1>This Meeting Has Cost</h1>
-  	<div class="odometer"></div>
-  	<p id="started_at" class="small"></p>
-  	<form class="stop" action="javascript:false">
-          <input type="submit" value="stop the bleeding">
-        </form>
-  </div>
+<div id="display">
+  <h1>This Meeting Has Cost</h1>
+  <div class="odometer"></div>
+  <p id="started_at" class="small"></p>
+  <form class="stop" action="javascript:false">
+    <input type="submit" value="stop the bleeding">
+  </form>
+</div>
 
-  <script type="text/javascript">
-    $( function() { $(".ticker").meetingTicker(); });
-  </script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-19174339-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script');
+    ga.type = 'text/javascript';
+    ga.async = true;
+
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+  $( function() { $(".ticker").meetingTicker(); });
+</script>
 </body>
 </html>

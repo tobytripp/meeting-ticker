@@ -18,6 +18,9 @@ class MeetingTicker
 
   start: ->
     return unless this.valid()
+
+    this.startTime( this._formElement( "start_time" ).val() )
+
     @display.show()
     @form.parent().hide()
     $("#started_at").text "(we began at #{this.startTime().toString()})"
@@ -43,25 +46,23 @@ class MeetingTicker
   hourlyRate: (rate) ->
     if rate?
       @_rate = parseFloat( rate )
-      @form.find( "input[name=hourly_rate]" ).val( @_rate )
+      this._formElement( "hourly_rate" ).val( @_rate )
     throw new Error( "Rate is not set." ) unless @_rate?
     @_rate
 
   attendeeCount: (count) ->
     if count?
       @_attendees = parseInt( count )
-      @form.find( "input[name=attendees]" ).val( @_attendees )
+      this._formElement( "attendees" ).val( @_attendees )
     throw new Error( "Attendee Count is not set." ) unless @_attendees?
     @_attendees
 
   startTime: (time) ->
-    input = @form.find( "input[name=start_time]" )
+    input = this._formElement( "start_time" )
     if time?
       @_startTime = new Time( time )
       input.val( @_startTime.toString() )
 
-    value = input.val()
-    @_startTime = new Time( value ) if value.length > 0
     @_startTime
 
   elapsedSeconds: ->
@@ -108,15 +109,15 @@ class MeetingTicker
         hourly_rate: "Must be a number greater than zero"
 
   _bindFormEvents: ->
-    @form.find( "input[name=start_time]" ).change (event) =>
+    this._formElement( "start_time" ).change (event) =>
       event.preventDefault()
       this.startTime( $(event.target).val() )
 
-    @form.find( "input[name=hourly_rate]" ).change (event) =>
+    this._formElement( "hourly_rate" ).change (event) =>
       event.preventDefault()
       this.hourlyRate $(event.target).val()
 
-    @form.find( "input[name=attendees]" ).change (event) =>
+    this._formElement( "attendees" ).change (event) =>
       event.preventDefault
       this.attendeeCount $(event.target).val()
 
@@ -128,15 +129,15 @@ class MeetingTicker
       event.preventDefault
       this.stop()
 
-  _detectCurrency: ->
-    this.currency( Locale.current().currency() )
+  _detectCurrency: -> this.currency( Locale.current().currency() )
+
+  _formElement: (name) -> @form.find( "input[name=#{name}]" )
 
 class Time
   @now: ->
     new Time()
 
   constructor: (time) ->
-    console.log time
     if time? and time.getMinutes?
       @time = time
     else if typeof time == "number"
