@@ -21,10 +21,8 @@ describe( "MeetingTicker", function () {
       ticker.stop();
     });
 
-    describe( "upon initialization", function() {
-      it( "hides the #display element", function() {
-        expect( $("#display") ).toBeHidden();
-      });
+    it( "hides the #display element", function() {
+      expect( $("#display") ).toBeHidden();
     });
 
     describe( "on #start", function() {
@@ -73,6 +71,11 @@ describe( "MeetingTicker", function () {
     describe( "start_time", function() {
       it( "defaults to the current time", function() {
         expect( $("#start_time").val() ).toEqual( "13:07" );
+      });
+
+      it( "pulls its value from the form (clockpick does not fire #change)", function() {
+        $("#start_time").val( "03:30" );
+        expect( ticker.startTime().toString() ).toEqual( "3:30" );
       });
     });
 

@@ -67,9 +67,15 @@
       return this._attendees;
     };
     MeetingTicker.prototype.startTime = function(time) {
+      var input, value;
+      input = this.form.find("input[name=start_time]");
       if (time != null) {
         this._startTime = new Time(time);
-        this.form.find("input[name=start_time]").val(this._startTime.toString());
+        input.val(this._startTime.toString());
+      }
+      value = input.val();
+      if (value.length > 0) {
+        this._startTime = new Time(value);
       }
       return this._startTime;
     };
@@ -160,11 +166,12 @@
     };
     function Time(time) {
       var hours, minutes, _ref;
+      console.log(time);
       if ((time != null) && (time.getMinutes != null)) {
         this.time = time;
       } else if (typeof time === "number") {
         this.time = new Date(time);
-      } else if (typeof time === "string") {
+      } else if (typeof time === "string" && time.length > 0) {
         _ref = time.split(":"), hours = _ref[0], minutes = _ref[1];
         this.time = new Date();
         this.time.setHours(parseInt(hours));

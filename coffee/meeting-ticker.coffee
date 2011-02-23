@@ -16,7 +16,7 @@ class MeetingTicker
     this._bindFormEvents()
     this._detectCurrency()
 
-  start: () ->
+  start: ->
     return unless this.valid()
     @display.show()
     @form.parent().hide()
@@ -27,14 +27,13 @@ class MeetingTicker
       (() => @odometerElement.trigger( "update", this.cost() )),
       UPDATE_INTERVAL )
 
-  stop: () ->
+  stop: ->
     clearInterval @timer
     @timer = null
 
-  isRunning: () ->
-    @timer?
+  isRunning: -> @timer?
 
-  cost: () ->
+  cost: ->
     try
       this.perSecondBurn() * this.elapsedSeconds()
     catch e
@@ -56,19 +55,22 @@ class MeetingTicker
     @_attendees
 
   startTime: (time) ->
+    input = @form.find( "input[name=start_time]" )
     if time?
       @_startTime = new Time( time )
-      @form.find( "input[name=start_time]" ).val( @_startTime.toString() )
+      input.val( @_startTime.toString() )
 
+    value = input.val()
+    @_startTime = new Time( value ) if value.length > 0
     @_startTime
 
-  elapsedSeconds: () ->
+  elapsedSeconds: ->
       Time.now().secondsSince this.startTime()
 
-  hourlyBurn: () ->
+  hourlyBurn: ->
     this.hourlyRate() * this.attendeeCount()
 
-  perSecondBurn: () ->
+  perSecondBurn: ->
     this.hourlyBurn() / SECONDS_PER_HOUR
 
   currency: (newCurrency) ->
@@ -77,15 +79,15 @@ class MeetingTicker
       view.val( newCurrency )
     view.val()
 
-  currencyLabel: () ->
+  currencyLabel: ->
     @form.find( "select[name=units] option:selected" ).text()
 
-  valid: () ->
+  valid: ->
     @form.valid()
 
-  _initForm: () ->
+  _initForm: ->
     this.startTime( Time.now() ) unless this.startTime()?
-    $("input.watermark").each () ->
+    $("input.watermark").each ->
       $(this).watermark( $(this).attr( "title" ) )
     $("#start_time").clockpick({
       military: true, layout: "horizontal"
@@ -105,7 +107,7 @@ class MeetingTicker
         attendees:   "Must be a number greater than zero"
         hourly_rate: "Must be a number greater than zero"
 
-  _bindFormEvents: () ->
+  _bindFormEvents: ->
     @form.find( "input[name=start_time]" ).change (event) =>
       event.preventDefault()
       this.startTime( $(event.target).val() )
@@ -126,19 +128,20 @@ class MeetingTicker
       event.preventDefault
       this.stop()
 
-  _detectCurrency: () ->
+  _detectCurrency: ->
     this.currency( Locale.current().currency() )
 
 class Time
-  @now: () ->
+  @now: ->
     new Time()
 
   constructor: (time) ->
+    console.log time
     if time? and time.getMinutes?
       @time = time
     else if typeof time == "number"
       @time = new Date( time )
-    else if typeof time == "string"
+    else if typeof time == "string" and time.length > 0
       [hours, minutes] = time.split ":"
       @time = new Date()
       @time.setHours parseInt( hours )
@@ -151,13 +154,13 @@ class Time
   secondsSince: (past) ->
     (@time - past.time) / 1000
 
-  toString: () ->
+  toString: ->
     minutes = @time.getMinutes()
     minutes = "0" + minutes if minutes < 10
     @time.getHours() + ":" + minutes
 
 class Locale
-  @current: () ->
+  @current: ->
     new Locale()
 
   constructor: (language) ->
@@ -176,7 +179,7 @@ class Locale
     else
       @language = lang[0]
 
-  currency: () ->
+  currency: ->
     switch @language
       when "us" then "$"
       when "gb" then "pound"
