@@ -140,15 +140,15 @@
         return this.hourlyRate($(event.target).val());
       }, this));
       this._formElement("attendees").change(__bind(function(event) {
-        event.preventDefault;
+        event.preventDefault();
         return this.attendeeCount($(event.target).val());
       }, this));
       this.form.submit(__bind(function(event) {
-        event.preventDefault;
+        event.preventDefault();
         return this.start();
       }, this));
       return $("form.stop").submit(__bind(function(event) {
-        event.preventDefault;
+        event.preventDefault();
         return this.stop();
       }, this));
     };

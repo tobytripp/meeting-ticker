@@ -118,15 +118,15 @@ class MeetingTicker
       this.hourlyRate $(event.target).val()
 
     this._formElement( "attendees" ).change (event) =>
-      event.preventDefault
+      event.preventDefault()
       this.attendeeCount $(event.target).val()
 
     @form.submit (event) =>
-      event.preventDefault
+      event.preventDefault()
       this.start()
 
     $("form.stop").submit (event) =>
-      event.preventDefault
+      event.preventDefault()
       this.stop()
 
   _detectCurrency: -> this.currency( Locale.current().currency() )
