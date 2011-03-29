@@ -33,7 +33,7 @@ p {
    font-size: 95%;
    font-weight: normal;
    width: 40%;
-   margin: 0 auto;
+   margin: 0 auto 2em;
 }
 .small { font-size: 70%; }
 
