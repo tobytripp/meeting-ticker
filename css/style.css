@@ -3,7 +3,7 @@ body {
   background: #6E0911;
   color:      #757890;
   text-align: center;
-  
+
   font-size: 18px;
 }
 
@@ -21,31 +21,33 @@ h1 { font-size: 1.8em; }
 h2 { font-size: 1.4em; }
 h3 { font-size: 1.0em; }
 
-p { 
+p {
   font-size: 1.0em;
   padding:   0.2em;
   margin:    0;
 }
 
+.notes {
+   text-align: left;
+   color: #F5DEB3;
+   font-size: 95%;
+   font-weight: normal;
+   width: 40%;
+   margin: 0 auto;
+}
 .small { font-size: 70%; }
 
-#display { 
+#display {
   background: #470F14;
   padding: 2em;
   margin:  2em;
   -moz-border-radius:    30px;
   -webkit-border-radius: 30px;
-  
-  -webkit-box-shadow: 5px 5px 5px rgba( 0, 0, 0, 0.5 );
-  -moz-box-shadow: 5px 5px 5px rgba( 0, 0, 0, 0.5 );
-}
+  border-radius: 30px;
 
-#form > p {
-  color: #F5DEB3;
-  font-size: 95%;
-  font-weight: normal;
+  -webkit-box-shadow: 5px 5px 5px rgba( 0, 0, 0, 0.5 );
+  -moz-box-shadow:    5px 5px 5px rgba( 0, 0, 0, 0.5 );
 }
-#form > p.small { font-size: 70%; }
 
 #form a { color: #F5DEB3; }
 
@@ -60,7 +62,7 @@ form.setup {
   -webkit-border-radius: 20px;
 }
 
-form dt { 
+form dt {
   clear: both;
   float: left;
   text-align: right;
@@ -80,10 +82,10 @@ form dd {
   width:          37%;
 }
 
-dd input { 
+dd input {
   margin: 0;
   width:     7em;
-  font-size: 1em;	 
+  font-size: 1em;
 }
 
 .error { color: red; }
@@ -93,5 +95,5 @@ label.error {
 }
 
 form.stop input {
-	font-size: 2em;
+   font-size: 2em;
 }
