@@ -28,9 +28,11 @@ class MeetingTicker
 
     @timer = setInterval(
       (() => @odometerElement.trigger( "update", this.cost() )),
-      UPDATE_INTERVAL )
+      UPDATE_INTERVAL
+    )
 
   stop: ->
+    console.log("Stopped...")
     clearInterval @timer
     @timer = null
 
@@ -44,17 +46,25 @@ class MeetingTicker
       throw e
 
   hourlyRate: (rate) ->
+    input = this._formElement( "hourly_rate" )
     if rate?
       @_rate = parseFloat( rate )
-      this._formElement( "hourly_rate" ).val( @_rate )
-    throw new Error( "Rate is not set." ) unless @_rate?
+      input.val( @_rate )
+    else if input.val()?
+      @_rate = parseFloat( input.val() )
+
+    throw new Error( "Rate is not set." ) if not @_rate? or isNaN( @_rate )
     @_rate
 
   attendeeCount: (count) ->
+    input = this._formElement( "attendees" );
     if count?
       @_attendees = parseInt( count )
-      this._formElement( "attendees" ).val( @_attendees )
-    throw new Error( "Attendee Count is not set." ) unless @_attendees?
+      input.val( @_attendees )
+    else if input.val()?
+      @_attendees = parseInt( input.val() )
+
+    throw new Error( "Attendee Count is not set." ) if not @_attendees? or isNaN( @_attendees )
     @_attendees
 
   startTime: (time) ->

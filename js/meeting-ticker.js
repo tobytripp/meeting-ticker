@@ -33,6 +33,7 @@
       }, this)), UPDATE_INTERVAL);
     };
     MeetingTicker.prototype.stop = function() {
+      console.log("Stopped...");
       clearInterval(this.timer);
       return this.timer = null;
     };
@@ -48,21 +49,29 @@
       }
     };
     MeetingTicker.prototype.hourlyRate = function(rate) {
+      var input;
+      input = this._formElement("hourly_rate");
       if (rate != null) {
         this._rate = parseFloat(rate);
-        this._formElement("hourly_rate").val(this._rate);
+        input.val(this._rate);
+      } else if (input.val() != null) {
+        this._rate = parseFloat(input.val());
       }
-      if (this._rate == null) {
+      if (!(this._rate != null) || isNaN(this._rate)) {
         throw new Error("Rate is not set.");
       }
       return this._rate;
     };
     MeetingTicker.prototype.attendeeCount = function(count) {
+      var input;
+      input = this._formElement("attendees");
       if (count != null) {
         this._attendees = parseInt(count);
-        this._formElement("attendees").val(this._attendees);
+        input.val(this._attendees);
+      } else if (input.val() != null) {
+        this._attendees = parseInt(input.val());
       }
-      if (this._attendees == null) {
+      if (!(this._attendees != null) || isNaN(this._attendees)) {
         throw new Error("Attendee Count is not set.");
       }
       return this._attendees;

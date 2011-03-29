@@ -42,9 +42,18 @@ describe( "MeetingTicker", function () {
     });
 
     describe( "#hourlyRate", function() {
+      afterEach( function() {
+        ticker._rate = null;
+      });
+
       it( "is converted to a float", function() {
         ticker.hourlyRate( "200" );
         expect( ticker.hourlyRate() ).toEqual( 200.00 );
+      });
+
+      it( "is fetched from the input field", function() {
+        $("#hourly_rate").val( "14" );
+        expect( ticker.hourlyRate() ).toEqual( 14 );
       });
 
       it( "accepts fractional values", function() {
@@ -53,7 +62,7 @@ describe( "MeetingTicker", function () {
       });
 
       it( "throws an exception if the rate is not set", function() {
-        expect( ticker.hourlyRate ).toThrow( "Rate is not set." );
+        expect( function() { ticker.hourlyRate() }).toThrow( "Rate is not set." );
       });
     });
 
@@ -63,8 +72,14 @@ describe( "MeetingTicker", function () {
         expect( ticker.attendeeCount() ).toEqual( 25 );
       });
 
+      it( "is fetched from the input field", function() {
+        $("#attendees").val( "14" );
+        expect( ticker.attendeeCount() ).toEqual( 14 );
+      });
+
       it( "throws an Error if the count is not set", function() {
-        expect( ticker.attendeeCount ).toThrow( "Attendee Count is not set." );
+        console.log( "attendees: " + $("#attendees").val() );
+        expect( function() { ticker.attendeeCount() }).toThrow( "Attendee Count is not set." );
       });
     });
 
@@ -174,6 +189,10 @@ describe( "MeetingTicker", function () {
         });
       });
 
+      afterEach( function() {
+        ticker.stop();
+      });
+
       it( "stops the timer, no longer triggering updates", function() {
         runs( function() {
           ticker.hourlyRate( "200" );
@@ -186,6 +205,7 @@ describe( "MeetingTicker", function () {
         runs( function() {
           expect( update_triggered ).toBeTruthy();
           update_triggered = false;
+          $("#hourly_rate").val("");
           ticker._rate = null;
         });
 
