@@ -68,6 +68,7 @@ class MeetingTicker
     @_attendees
 
   startTime: (time) ->
+    return @_startTime if this.isRunning()
     input = this._formElement( "start_time" )
     if time?
       @_startTime = new Time( time )
@@ -155,15 +156,17 @@ class Time
     else if typeof time == "string" and time.length > 0
       [hours, minutes] = time.split ":"
       @time = new Date()
-      @time.setHours parseInt( hours )
+      @time.setHours   parseInt( hours )
       @time.setMinutes parseInt( minutes )
+      @time.setSeconds 0
     else if time instanceof Time
       @time = time.time
     else
       @time = new Date()
 
   secondsSince: (past) ->
-    (@time - past.time) / 1000
+    diff = @time.getTime() - past.time.getTime()
+    diff / 1000.00
 
   toString: ->
     minutes = @time.getMinutes()
@@ -196,9 +199,10 @@ class Locale
       when "gb" then "pound"
       when 'ca', 'de', 'el', 'es', 'et', 'fi', \
            'fr', 'ga', 'it', 'lb', 'mt', 'nl', \
-           'pt', 'sk', 'sl', 'sv'
+           'pt', 'sk', 'sl'
         "euro"
       when 'ja' then "yen"
+      when 'sv' then "Kr"
 
 
 $.fn.meetingTicker = (options) ->
