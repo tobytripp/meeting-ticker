@@ -68,6 +68,9 @@
     };
     MeetingTicker.prototype.startTime = function(time) {
       var input, value;
+      if (this.isRunning()) {
+        return this._startTime;
+      }
       input = this.form.find("input[name=start_time]");
       if (time != null) {
         this._startTime = new Time(time);
@@ -166,7 +169,6 @@
     };
     function Time(time) {
       var hours, minutes, _ref;
-      console.log(time);
       if ((time != null) && (time.getMinutes != null)) {
         this.time = time;
       } else if (typeof time === "number") {
@@ -176,6 +178,7 @@
         this.time = new Date();
         this.time.setHours(parseInt(hours));
         this.time.setMinutes(parseInt(minutes));
+        this.time.setSeconds(0);
       } else if (time instanceof Time) {
         this.time = time.time;
       } else {
@@ -183,7 +186,9 @@
       }
     }
     Time.prototype.secondsSince = function(past) {
-      return (this.time - past.time) / 1000;
+      var diff;
+      diff = this.time.getTime() - past.time.getTime();
+      return diff / 1000.00;
     };
     Time.prototype.toString = function() {
       var minutes;
@@ -238,10 +243,11 @@
         case 'pt':
         case 'sk':
         case 'sl':
-        case 'sv':
           return "euro";
         case 'ja':
           return "yen";
+        case 'sv':
+          return "Kr";
       }
     };
     return Locale;

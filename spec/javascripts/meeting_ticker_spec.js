@@ -249,9 +249,11 @@ describe( "MeetingTicker", function () {
           ticker.start();
         });
 
-         waits( UPDATE_INTERVAL );
+        waits( UPDATE_INTERVAL );
 
-        runs( function() { expect( update_value ).toEqual( ticker.cost() ) });
+        runs( function() { 
+          expect( update_value ).toEqual( ticker.cost() );
+        });
       });
 
       it( "sets the currency prefix for the odometer", function() {
@@ -316,11 +318,16 @@ describe( "MeetingTicker", function () {
       expect( time.toString() ).toEqual( "19:42" );
     });
 
-    it( "can calculate the number of seconds passed since a given Time", function() {
-      var then = new MeetingTicker.Time( Date.parse( "January 2, 1980 14:02" ) );
-      var now  = new MeetingTicker.Time( Date.parse( "January 2, 1980 14:03" ) );
+    it( "sets the seconds to zero if given a string", function() {
+      var time = new MeetingTicker.Time( "19:42" );
+      expect( time.time.getSeconds() ).toEqual( 0 );
+    });
 
-      expect( now.secondsSince( then ) ).toEqual( 60 );
+    it( "can calculate the number of seconds passed since a given Time", function() {
+      var then = new MeetingTicker.Time( Date.parse( "January 2, 1980 14:02:00" ) );
+      var now  = new MeetingTicker.Time( Date.parse( "January 2, 1980 14:03:35" ) );
+
+      expect( now.secondsSince( then ) ).toEqual( 95 );
     });
   });
 
@@ -369,6 +376,24 @@ describe( "MeetingTicker", function () {
 
     it( "sets the select to 'euro'", function() {
       expect( $(".ticker select[name=units]") ).toHaveValue( "euro" );
+    });
+  });
+
+  describe( "with currency locale setup for sweden", function() {
+    beforeEach( function() {
+      spyOn( MeetingTicker.Locale, "current" ).
+        andReturn( new MeetingTicker.Locale( "sv" ) );
+      $('.ticker').meetingTicker();
+      ticker = $('.ticker').data("meeting-ticker").ticker;
+    });
+
+    it( "has a currency value of 'Kr'", function() {
+      var locale = new MeetingTicker.Locale( "sv" );
+      expect( locale.currency() ).toEqual( "Kr" );
+    });
+
+    it( "sets the select to 'Kr'", function() {
+      expect( $(".ticker select[name=units]") ).toHaveValue( "Kr" );
     });
   });
 });
