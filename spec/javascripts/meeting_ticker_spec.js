@@ -11,6 +11,10 @@ describe( "MeetingTicker", function () {
     spyOn( MeetingTicker.Time, 'now' ).andReturn( mnow );
   });
 
+  it( "installs itself as a jQuery plugin", function() {
+    expect( typeof jQuery.fn.meetingTicker ).toBe( "function" );
+  });
+
   describe( "after initialization", function() {
     beforeEach( function() {
       $('.ticker').meetingTicker();
@@ -275,7 +279,7 @@ describe( "MeetingTicker", function () {
 
         waits( UPDATE_INTERVAL );
 
-        runs( function() { 
+        runs( function() {
           expect( update_value ).toEqual( ticker.cost() );
         });
       });
