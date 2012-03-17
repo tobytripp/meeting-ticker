@@ -1,4 +1,4 @@
-rvm --create use 1.9.2@javascript
+rvm use 1.9.3
 
 [[ -s "meeting-ticker.gems" ]] && rvm gemset import meeting-ticker.gems
 bundle install
