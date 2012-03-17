@@ -1,3 +1,5 @@
+$ = jQuery
+
 UPDATE_INTERVAL  = 125
 SECONDS_PER_HOUR = 60.0 * 60.0
 
@@ -102,7 +104,10 @@ class MeetingTicker
     $("input.watermark").each ->
       $(this).watermark( $(this).attr( "title" ) )
     $("#start_time").clockpick({
-      military: true, layout: "horizontal"
+      military: true,
+      starthour: 0,
+      endhour:  23,
+      layout: "vertical"
     })
     @form.validate
       rules:
@@ -205,6 +210,7 @@ class Locale
       when 'sv' then "Kr"
 
 
+console.log( "installing plugin…" )
 $.fn.meetingTicker = (options) ->
   settings =
     displaySelector: "#display"
