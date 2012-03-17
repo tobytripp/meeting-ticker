@@ -11,10 +11,13 @@
 #   - dist/**/*.js
 #
 src_files:
-  - js/**/*.js
-  - js/**/jquery.*.js
-  - js/jquery-ui-*.js
   - js/jquery-1.3.2.js
+  - js/jquery-ui-1.7.*.js
+  - js/jquery.clockpick.1.2.1.js
+  - js/jquery.validate.min.js
+  - js/jquery.watermark.js
+  - js/odometer/jquery.odometer.js
+  - js/meeting-ticker.js
 
 # stylesheets
 #
