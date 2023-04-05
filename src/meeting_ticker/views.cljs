@@ -1,8 +1,7 @@
 (ns meeting-ticker.views
   (:require
    [re-frame.core :as re-frame]
-   [goog.string :as gstring]
-   [goog.string.format]
+   [goog.i18n.NumberFormat]
    [meeting-ticker.subs :as subs]
 
    [meeting-ticker.events :as events]))
@@ -28,8 +27,9 @@
      ]))
 
 (defn ticker []
-  (let [cost (re-frame/subscribe [::subs/cost])]
-    [:h1 (gstring/format "%.2f" @cost)]))
+  (let [cost (re-frame/subscribe [::subs/cost])
+        fmt  (goog.i18n.NumberFormat. goog.i18n.NumberFormat.Format.CURRENCY)]
+    [:h1 (.format fmt @cost)]))
 
 (defn main-panel []
   (let [started-at (re-frame/subscribe [::subs/started-at])]
