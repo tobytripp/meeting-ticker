@@ -28,11 +28,7 @@
          now        (get db :time)
          start-time (str->time time-str)
          burn-rate  (/ (* (get-in db [:form :rate])
-                             (get-in db [:form :attendees]))
+                          (get-in db [:form :attendees]))
                           3600)
          elapsed-s  (/ (- now start-time) 1000)]
-     (cljs.pprint/pprint now)
-     (cljs.pprint/pprint start-time)
-     (cljs.pprint/pprint elapsed-s)
-     (* burn-rate elapsed-s)
-     )))
+     (* burn-rate elapsed-s))))

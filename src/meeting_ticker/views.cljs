@@ -3,8 +3,8 @@
    [re-frame.core :as re-frame]
    [goog.i18n.NumberFormat]
    [meeting-ticker.subs :as subs]
-
-   [meeting-ticker.events :as events]))
+   [meeting-ticker.events :as events]
+   [meeting-ticker.odometer.views :as odometer]))
 
 (defn input [type label id]
   (let [value (re-frame/subscribe [::subs/form id])]
@@ -29,7 +29,7 @@
 (defn ticker []
   (let [cost (re-frame/subscribe [::subs/cost])
         fmt  (goog.i18n.NumberFormat. goog.i18n.NumberFormat.Format.CURRENCY)]
-    [:h1 (.format fmt @cost)]))
+    [odometer/odometer (.format fmt @cost)]))
 
 (defn main-panel []
   (let [started-at (re-frame/subscribe [::subs/started-at])]
